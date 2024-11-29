@@ -2,7 +2,7 @@
 import { Turbo } from "@hotwired/turbo-rails"
 import "controllers"
 
-Turbo.session.drive = false
+Turbo.session.drive = true
 
 import jquery from "jquery";
 window.jQuery = jquery;

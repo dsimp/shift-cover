@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :job_types
+  resources :jobs
+  devise_for :users
    root "photos#index"
 
   # This is a blank app! Pick your first screen, build out the RCAV, and go from there. E.g.:

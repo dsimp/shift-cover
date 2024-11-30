@@ -1,0 +1,14 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Job types</h1>
+
+<div id="job_types">
+  <% @job_types.each do |job_type| %>
+    <%= render job_type %>
+    <p>
+      <%= link_to "Show this job type", job_type %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New job type", new_job_type_path %>

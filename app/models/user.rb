@@ -25,4 +25,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable
+
+  has_many :posted_jobs, class_name: 'Job', foreign_key: 'opener_id', dependent: :destroy
+  has_many :covered_jobs, class_name: 'Job', foreign_key: 'cover_id'
 end

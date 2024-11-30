@@ -1,0 +1,22 @@
+
+<%= simple_form_for(@job) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.input :shift_date %>
+    <%= f.association :opener %>
+    <%= f.association :cover %>
+    <%= f.input :location_name %>
+    <%= f.input :shift_started_at %>
+    <%= f.input :shift_ended_at %>
+    <%= f.input :location_address %>
+    <%= f.input :title %>
+    <%= f.input :description %>
+    <%= f.association :job_type %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit %>
+  </div>
+<% end %>

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :job_types
+  resources :jobs
   devise_for :users
    root "photos#index"
 

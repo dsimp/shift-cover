@@ -10,10 +10,36 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_30_001654) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_30_201813) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
+
+  create_table "job_types", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.text "training_module"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "jobs", force: :cascade do |t|
+    t.date "shift_date"
+    t.bigint "opener_id", null: false
+    t.bigint "cover_id", null: false
+    t.string "location_name"
+    t.datetime "shift_started_at"
+    t.datetime "shift_ended_at"
+    t.string "location_address"
+    t.string "title"
+    t.text "description"
+    t.bigint "job_type_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cover_id"], name: "index_jobs_on_cover_id"
+    t.index ["job_type_id"], name: "index_jobs_on_job_type_id"
+    t.index ["opener_id"], name: "index_jobs_on_opener_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.citext "email", default: "", null: false
@@ -31,4 +57,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_30_001654) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "jobs", "job_types"
+  add_foreign_key "jobs", "users", column: "cover_id"
+  add_foreign_key "jobs", "users", column: "opener_id"
 end

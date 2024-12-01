@@ -1,0 +1,76 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+  <div class="container">
+    <%= link_to "ShiftCover", root_path, class: "navbar-brand" %>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Left Side of Navbar -->
+      <ul class="navbar-nav mr-auto">
+        <% if user_signed_in? %>
+          <!-- Available Shifts -->
+          <li class="nav-item">
+            <%= link_to "Available Shifts", jobs_path, class: "nav-link" %>
+          </li>
+          <!-- My Shifts -->
+          <li class="nav-item">
+            <%= link_to "My Shifts", jobs_path(opener_id: current_user.id), class: "nav-link" %>
+          </li>
+          <!-- Job Types -->
+          <li class="nav-item">
+            <%= link_to "Job Types", job_types_path, class: "nav-link" %>
+          </li>
+        <% else %>
+          <!-- Available Shifts (visible to all) -->
+          <li class="nav-item">
+            <%= link_to "Available Shifts", jobs_path, class: "nav-link" %>
+          </li>
+          <!-- Job Types (visible to all) -->
+          <li class="nav-item">
+            <%= link_to "Job Types", job_types_path, class: "nav-link" %>
+          </li>
+        <% end %>
+      </ul>
+
+      <!-- Right Side of Navbar -->
+      <ul class="navbar-nav ml-auto">
+        <% if user_signed_in? %>
+          <!-- Post a Shift -->
+          <li class="nav-item">
+            <%= link_to "Post a Shift", new_job_path, class: "nav-link" %>
+          </li>
+          <!-- User Dropdown -->
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <% if current_user.profile_picture.attached? %>
+                <%= image_tag current_user.profile_picture.variant(resize_to_limit: [30, 30]), class: "rounded-circle mr-2", alt: current_user.name %>
+              <% else %>
+                <%= image_tag 'default_profile.png', size: '30x30', class: "rounded-circle mr-2", alt: current_user.name %>
+              <% end %>
+              <span><%= current_user.name %></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+              <!-- Your Profile -->
+              <li><%= link_to "Your Profile", user_path(current_user), class: "dropdown-item" %></li>
+              <!-- Edit Profile -->
+              <li><%= link_to "Edit Profile", edit_user_path(current_user), class: "dropdown-item" %></li>
+              <!-- Sign Out -->
+              <li><%= link_to "Sign Out", destroy_user_session_path, data: { method: :delete }, class: "dropdown-item" %></li>
+            </ul>
+          </li>
+        <% else %>
+          <!-- Sign In -->
+          <li class="nav-item">
+            <%= link_to "Sign In", new_user_session_path, class: "nav-link" %>
+          </li>
+          <!-- Sign Up -->
+          <li class="nav-item">
+            <%= link_to "Sign Up", new_user_registration_path, class: "nav-link" %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>

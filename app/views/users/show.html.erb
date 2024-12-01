@@ -1,0 +1,27 @@
+<h1><%= @user.name %>'s Profile</h1>
+
+<div>
+  <% if @user.profile_picture.attached? %>
+    <%= image_tag @user.profile_picture.variant(resize_to_limit: [200, 200]) %>
+  <% else %>
+    <%= image_tag 'default_profile.png', size: '200x200' %>
+  <% end %>
+</div>
+
+<p><strong>Name:</strong> <%= @user.name %></p>
+<p><strong>City:</strong> <%= @user.city %></p>
+
+<p><strong>Professions:</strong></p>
+<ul>
+  <% if @user.job_types.any? %>
+    <% @user.job_types.each do |job_type| %>
+      <li><%= job_type.title %></li>
+    <% end %>
+  <% else %>
+    <li>No professions yet.</li>
+  <% end %>
+</ul>
+
+<% if @user == current_user %>
+  <%= link_to 'Edit Profile', edit_user_path(@user), class: 'btn btn-primary' %>
+<% end %>

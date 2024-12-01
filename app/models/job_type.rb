@@ -13,6 +13,10 @@ class JobType < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :description, presence: true
   validates :training_module, presence: true, on: :update # Training module should be present after creation
+  
+    has_many :user_job_types, dependent: :destroy
+    has_many :users, through: :user_job_types
+  
 
   def generate_training_module
     # This is a placeholder for integration with the ChatGPT API

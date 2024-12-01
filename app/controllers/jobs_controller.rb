@@ -2,9 +2,14 @@ class JobsController < ApplicationController
   before_action :set_job, only: %i[ show edit update destroy ]
 
   # GET /jobs or /jobs.json
-  def index
+ 
+def index
+  if params[:opener_id]
+    @jobs = Job.where(opener_id: params[:opener_id])
+  else
     @jobs = Job.all
   end
+end
 
   # GET /jobs/1 or /jobs/1.json
   def show

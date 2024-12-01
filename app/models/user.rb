@@ -3,6 +3,7 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
+#  city                   :string
 #  email                  :citext           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  location               :string
@@ -28,4 +29,28 @@ class User < ApplicationRecord
 
   has_many :posted_jobs, class_name: 'Job', foreign_key: 'opener_id', dependent: :destroy
   has_many :covered_jobs, class_name: 'Job', foreign_key: 'cover_id'
+  
+  has_one_attached :profile_picture
+
+  has_many :user_job_types, dependent: :destroy
+  has_many :job_types, through: :user_job_types
+  validates :name, presence: true, uniqueness: true
+
+  has_one_attached :profile_picture
+
+  validate :acceptable_image
+
+  def acceptable_image
+    return unless profile_picture.attached?
+
+    unless profile_picture.byte_size <= 1.megabyte
+      errors.add(:profile_picture, "is too big")
+    end
+
+    acceptable_types = ["image/jpeg", "image/png"]
+    unless acceptable_types.include?(profile_picture.content_type)
+      errors.add(:profile_picture, "must be a JPEG or PNG")
+    end
+  end
+    
 end

@@ -15,6 +15,13 @@
     <%= f.label :profile_picture %><br />
     <% if @user.profile_picture.attached? %>
   <%= image_tag @user.profile_picture.variant(resize_to_limit: [100, 100]), class: "img-thumbnail mb-2" %>
+
+  <div>
+  <%= f.label :profile_picture %> <br />
+  <% f.file_field :profile_picture %>
+  </div>
+
+
   <br />
     <% end %>
     <%= f.file_field :profile_picture %>

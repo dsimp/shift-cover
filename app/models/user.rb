@@ -29,8 +29,6 @@ class User < ApplicationRecord
   has_many :posted_jobs, class_name: 'Job', foreign_key: 'opener_id', dependent: :destroy
   has_many :covered_jobs, class_name: 'Job', foreign_key: 'cover_id'
   
-  has_one_attached :profile_picture
-
   has_many :user_job_types, dependent: :destroy
   has_many :job_types, through: :user_job_types
   validates :name, presence: true, uniqueness: true

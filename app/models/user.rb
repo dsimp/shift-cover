@@ -3,7 +3,6 @@
 # Table name: users
 #
 #  id                     :bigint           not null, primary key
-#  city                   :string
 #  email                  :citext           default(""), not null
 #  encrypted_password     :string           default(""), not null
 #  location               :string

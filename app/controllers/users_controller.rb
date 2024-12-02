@@ -1,14 +1,17 @@
+# app/controllers/users_controller.rb
+
 class UsersController < ApplicationController
-  before_action :authenticate_user!, only: [:edit, :update]
-  before_action :set_user, only: [:show, :edit, :update]
-  before_action :correct_user, only: [:edit, :update]
+  before_action :authenticate_user!
+  before_action :set_user, only: [:show]
+  before_action :set_current_user, only: [:edit, :update]
+  # You can remove the :correct_user before_action if @user is always current_user
 
   def show
-    # Display user profile
+    # @user is set by set_user
   end
 
   def edit
-    # Edit user profile
+    # @user is set by set_current_user (current_user)
   end
 
   def update
@@ -25,11 +28,11 @@ class UsersController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  def correct_user
-    redirect_to root_path, alert: 'You can only edit your own profile.' unless @user == current_user
+  def set_current_user
+    @user = current_user
   end
 
   def user_params
-    params.require(:user).permit(:name, :city, :profile_picture)
+    params.require(:user).permit(:name, :location, :profile_picture)
   end
 end

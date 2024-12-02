@@ -9,7 +9,7 @@
 </div>
 
 <p><strong>Name:</strong> <%= @user.name %></p>
-<p><strong>City:</strong> <%= @user.city %></p>
+<p><strong>City:</strong> <%= @user.location %></p>
 
 <p><strong>Professions:</strong></p>
 <ul>
@@ -23,5 +23,5 @@
 </ul>
 
 <% if @user == current_user %>
-  <%= link_to 'Edit Profile', edit_user_path(@user), class: 'btn btn-primary' %>
+  <%= link_to "Edit Profile", edit_user_path(current_user), class: "dropdown-item" %>
 <% end %>

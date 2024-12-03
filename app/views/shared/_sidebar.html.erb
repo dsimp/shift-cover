@@ -1,0 +1,17 @@
+
+<% if user_signed_in? %>
+  <div class="col-md-3">
+    <div class="card mb-4">
+      <div class="card-body text-center">
+        <% if current_user.profile_picture.attached? %>
+          <%= image_tag current_user.profile_picture, class: 'profile-image mb-2', alt: current_user.name %>
+        <% else %>
+          <%= image_tag 'default_avatar.png', class: 'profile-image mb-2', alt: 'Default Avatar' %>
+        <% end %>
+        <h5><%= current_user.name %></h5>
+        <p class="text-muted"><%= current_user.location %></p>
+        <p><strong>Professions:</strong> <%= current_user.job_types.map(&:title).join(', ') %></p>
+      </div>
+    </div>
+  </div>
+<% end %>

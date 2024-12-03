@@ -19,6 +19,9 @@ gem 'aws-sdk-s3', require: false
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma"
 
+# Gemfile
+
+gem 'image_processing', '~> 1.2'
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
 gem "importmap-rails"
 
@@ -83,7 +86,6 @@ gem "active_link_to"
 gem "appdev_support"
 gem "awesome_print"
 gem "dotenv"
-gem "faker"
 gem "htmlbeautifier"
 gem "http"
 gem "sqlite3", "~> 1.4"
@@ -115,3 +117,5 @@ group :test do
   gem "rspec-html-matchers"
   gem "webmock"
 end
+
+gem "pundit", "~> 2.4"

@@ -1,14 +1,21 @@
-<p style="color: green"><%= notice %></p>
-
-<h1>Job types</h1>
-
-<div id="job_types">
-  <% @job_types.each do |job_type| %>
-    <%= render job_type %>
-    <p>
-      <%= link_to "Show this job type", job_type %>
-    </p>
+<!-- app/views/job_types/index.html.erb -->
+<div class="container">
+  <h2>Available Job Types</h2>
+  <% if @job_types.any? %>
+    <div class="row">
+      <% @job_types.each do |job_type| %>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title"><%= job_type.title %></h5>
+              <p class="card-text"><%= truncate(job_type.description, length: 100) %></p>
+              <%= link_to 'View Details', job_type_path(job_type), class: 'btn btn-primary' %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p>No job types available.</p>
   <% end %>
 </div>
-
-<%= link_to "New job type", new_job_type_path %>

@@ -1,22 +1,66 @@
+<%= form_with(model: job, local: true, multipart: true) do |form| %>
+  <% if job.errors.any? %>
+    <div id="error_explanation" class="alert alert-danger">
+      <h2><%= pluralize(job.errors.count, "error") %> prohibited this job from being saved:</h2>
+      <ul>
+        <% job.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
 
-<%= simple_form_for(@job) do |f| %>
-  <%= f.error_notification %>
-  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
-
-  <div class="form-inputs">
-    <%= f.input :shift_date %>
-    <%= f.association :opener %>
-    <%= f.association :cover %>
-    <%= f.input :location_name %>
-    <%= f.input :shift_started_at %>
-    <%= f.input :shift_ended_at %>
-    <%= f.input :location_address %>
-    <%= f.input :title %>
-    <%= f.input :description %>
-    <%= f.association :job_type %>
+  <div class="mb-3">
+    <%= form.label :company_name, "Company Name", class: 'form-label' %>
+    <%= form.text_field :company_name, class: 'form-control', required: true %>
   </div>
 
-  <div class="form-actions">
-    <%= f.button :submit %>
+  <div class="mb-3">
+    <%= form.label :person_of_contact, "Person of Contact", class: 'form-label' %>
+    <%= form.text_field :person_of_contact, class: 'form-control', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :phone_number, "Phone Number", class: 'form-label' %>
+    <%= form.telephone_field :phone_number, class: 'form-control', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :shift_date, class: 'form-label' %>
+    <%= form.date_field :shift_date, class: 'form-control', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :shift_started_at, "Shift Start Time", class: 'form-label' %>
+    <%= form.datetime_field :shift_started_at, class: 'form-control', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :shift_ended_at, "Shift End Time", class: 'form-label' %>
+    <%= form.datetime_field :shift_ended_at, class: 'form-control', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :location_address, "Location Address", class: 'form-label' %>
+    <%= form.text_field :location_address, class: 'form-control', required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :description, class: 'form-label' %>
+    <%= form.text_area :description, class: 'form-control', rows: 5, required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :image, "Job Image (Optional)", class: 'form-label' %>
+    <%= form.file_field :image, class: 'form-control' %>
+    <% if job.image.attached? %>
+      <div class="mt-2">
+        <%= image_tag job.image, class: 'img-thumbnail', width: 200, alt: 'Job Image' %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit class: 'btn btn-primary' %>
   </div>
 <% end %>

@@ -1,0 +1,25 @@
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title"><%= job.job_type.title %> - <%= job.shift_date.strftime("%B %d, %Y") %></h5>
+    <p class="card-text">
+      <strong>Time:</strong> <%= job.start_time.strftime("%I:%M %p") %> - <%= job.end_time.strftime("%I:%M %p") %><br>
+      <strong>Posted by:</strong> <%= link_to job.opener.name, job.opener %>
+    </p>
+    <% if job.cover.present? %>
+      <p class="text-success">Covered by <%= link_to job.cover.name, job.cover %></p>
+    <% else %>
+      <%= link_to 'Cover This Job', cover_job_path(job), method: :post, class: 'btn btn-primary' %>
+    <% end %>
+  </div>
+  <div class="card-footer text-center">
+  <% if current_user.completed_training_for?(job.job_type) %>
+    <%= link_to cover_job_path(job), method: :post, class: 'btn btn-success' do %>
+      <i class="fas fa-hand-paper"></i> Cover This Job
+    <% end %>
+  <% else %>
+    <%= link_to training_module_job_type_path(job.job_type), class: 'btn btn-warning' do %>
+      <i class="fas fa-graduation-cap"></i> Training Required
+    <% end %>
+  <% end %>
+</div>
+</div>

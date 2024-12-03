@@ -10,23 +10,26 @@
 #  updated_at      :datetime         not null
 #
 class JobType < ApplicationRecord
+  has_many :user_job_types, dependent: :destroy
+  has_many :users, through: :user_job_types
+  has_many :user_trainings, dependent: :destroy
+  has_many :trained_users, through: :user_trainings, source: :user
+  has_many :jobs, dependent: :destroy
+  has_one_attached :image
+
   validates :title, presence: true, uniqueness: true
   validates :description, presence: true
-  validates :training_module, presence: true, on: :update # Training module should be present after creation
-  
-    has_many :user_job_types, dependent: :destroy
-    has_many :users, through: :user_job_types
-  
+  validates :training_module, presence: true, on: :update
 
   def generate_training_module
-    # This is a placeholder for integration with the ChatGPT API
-    # Use the OpenAI API to create a 15-minute training module and quiz
-    OpenAI::Chat.new.call(
+    response = OpenAI::Chat.new.call(
       model: "gpt-4",
       messages: [
         { role: "system", content: "You are a helpful assistant for job training content." },
         { role: "user", content: "Generate a 15-minute training module with a quiz for a #{title} job." }
       ]
-    ).dig(:choices, 0, :message, :content)
+    )
+    self.training_module = response.dig(:choices, 0, :message, :content)
+    save
   end
 end

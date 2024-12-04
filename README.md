@@ -52,8 +52,7 @@ ShiftCover is a web application that streamlines job shift postings and coverage
 
 
 ### ERD
-![Homepage Screenshot](/workspaces/shift-cover/README.md
-/workspaces/shift-cover/erd.png)
+![Homepage Screenshot](erd.png)
 
 We've added additional Ruby gems and other software that aren't automatically available in a new Rails app, and configured 
 

@@ -1,10 +1,59 @@
-# Rails Template
+# ShiftCover
+## Djvon Simpson
 
-This is a base Ruby on Rails repository configured for learning with Codespaces (and Gitpod).
+ShiftCover is a web application that streamlines job shift postings and coverage, enabling users to post jobs, cover shifts, and complete training modules for professional certifications.
 
 - Ruby version: `3.2.1`
 - Rails version: `7.1.3.3`
 
+### Setup Instructions:
+### Local Setup Instructions
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/shiftcover.git
+   cd shiftcover
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   bundle install
+   yarn install
+   ```
+
+3. **Set up the database**:
+   ```bash
+   rails db:create
+   rails db:migrate
+   rake sample_data
+   ```
+
+4. **Configure Amazon S3**:
+   - Add a `.env` file in the root directory with:
+     ```
+     AWS_ACCESS_KEY_ID=your_aws_access_key
+     AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+     AWS_BUCKET_NAME=your_bucket_name
+     AWS_REGION=your_bucket_region
+     ```
+
+5. **Precompile assets**:
+   ```bash
+   rails assets:precompile
+   ```
+
+6. **Run the app**:
+   ```bash
+   rails server
+   ```
+   Open your browser and navigate to: `http://localhost:3000`
+
+
+
+
+### ERD
+![Homepage Screenshot](/workspaces/shift-cover/README.md
+/workspaces/shift-cover/erd.png)
 
 We've added additional Ruby gems and other software that aren't automatically available in a new Rails app, and configured 
 

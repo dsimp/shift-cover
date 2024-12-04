@@ -7,7 +7,8 @@ class UsersController < ApplicationController
   # You can remove the :correct_user before_action if @user is always current_user
 
   def show
-    # @user is set by set_user
+    @user = User.find(params[:id])
+    @posted_jobs = @user.posted_jobs.order(shift_date: :desc) # Fetch and order the user's posted jobs
   end
 
   def edit

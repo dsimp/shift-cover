@@ -1,31 +1,98 @@
 <h2>Edit <%= resource_name.to_s.humanize %></h2>
 
-<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, enctype: 'multipart/form-data' }) do |f| %>
-  <!-- Existing fields -->
+<!-- app/views/devise/registrations/edit.html.erb -->
 
-  <div class="field">
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <h2 class="text-center mb-4">Edit Profile</h2>
+
+      <!-- Display current profile picture -->
+      <div class="text-center mb-4">
+        <% if resource.profile_picture.attached? %>
+          <%= image_tag resource.profile_picture, class: 'profile-image mb-3', alt: resource.name %>
+        <% else %>
+          <%= image_tag 'default_avatar.png', class: 'profile-image mb-3', alt: 'Default Avatar' %>
+        <% end %>
+        <p><strong><%= resource.name %></strong></p>
+      </div>
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put, multipart: true, class: 'card p-4 shadow' }) do |f| %>
+        <% if resource.errors.any? %>
+          <div class="alert alert-danger" role="alert">
+            <ul>
+              <% resource.errors.full_messages.each do |message| %>
+                <li><%= message %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- Name Field -->
+        <div class="mb-3">
+          <%= f.label :name, class: 'form-label' %>
+          <%= f.text_field :name, autofocus: true, class: 'form-control', required: true %>
+        </div>
+
+        <!-- Email Field -->
+        <div class="mb-3">
+          <%= f.label :email, class: 'form-label' %>
+          <%= f.email_field :email, class: 'form-control', required: true %>
+        </div>
+
+        <!-- Location Field -->
+        <div class="mb-3">
+          <%= f.label :location, class: 'form-label' %>
+          <%= f.text_field :location, class: 'form-control' %>
+        </div>
+
+        <!-- Profile Picture Upload -->
+        <div class="mb-3">
+          <%= f.label :profile_picture, 'Change Profile Picture', class: 'form-label' %>
+          <%= f.file_field :profile_picture, class: 'form-control' %>
+        </div>
+
+        <!-- Password Fields -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= f.label :password, class: 'form-label' %>
+            <% if @minimum_password_length %>
+              <small class="form-text text-muted">
+                (<%= @minimum_password_length %> characters minimum)
+              </small>
+            <% end %>
+            <%= f.password_field :password, autocomplete: 'new-password', class: 'form-control' %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :password_confirmation, class: 'form-label' %>
+            <%= f.password_field :password_confirmation, autocomplete: 'new-password', class: 'form-control' %>
+          </div>
+        </div>
+
+        <!-- Current Password Field -->
+        <div class="mb-3">
+          <%= f.label :current_password, 'Current Password', class: 'form-label' %>
+          <%= f.password_field :current_password, autocomplete: 'current-password', class: 'form-control', required: true %>
+          <small class="form-text text-muted">
+            We need your current password to confirm your changes.
+          </small>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="d-grid">
+          <%= f.submit 'Update Profile', class: 'btn btn-primary' %>
+        </div>
+      <% end %>
+
+      <hr>
+
+      <!-- Cancel Account Deletion and Back Links -->
+      <div class="text-center">
+        <%= link_to 'Back to Profile', resource, class: 'btn btn-link' %>
+        <span class="text-muted mx-2">|</span>
+        <%= link_to 'Cancel my account', registration_path(resource_name), data: { confirm: 'Are you sure?' }, method: :delete, class: 'btn btn-outline-danger' %>
+      </div>
+    </div>
   </div>
-
-  <div class="field">
-    <%= f.label :location %><br />
-    <%= f.text_field :location %>
-  </div>
-
-  <div class="field">
-    <%= f.label :profile_picture %><br />
-    <% if resource.profile_picture.attached? %>
-      <%= image_tag resource.profile_picture.variant(resize_to_limit: [100, 100]) %><br />
-    <% end %>
-    <%= f.file_field :profile_picture %>
-  </div>
-
-  <!-- Existing fields -->
-<% end %>
-
-<h3>Cancel my account</h3>
-
-<div>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?", turbo_confirm: "Are you sure?" }, method: :delete %></div>
-
-<%= link_to "Back", :back %>
+</div>

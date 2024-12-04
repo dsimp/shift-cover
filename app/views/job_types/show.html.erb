@@ -1,10 +1,20 @@
-<p style="color: green"><%= notice %></p>
-
-<%= render @job_type %>
-
-<div>
-  <%= link_to "Edit this job type", edit_job_type_path(@job_type) %> |
-  <%= link_to "Back to job types", job_types_path %>
-
-  <%= button_to "Destroy this job type", @job_type, method: :delete %>
+<!-- app/views/job_types/show.html.erb -->
+<div class="container">
+  <h2><%= @job_type.title %></h2>
+  <p><%= @job_type.description %></p>
+  <% if @job_type.training_module.present? %>
+    <h4>Training Module</h4>
+    <div class="card">
+      <div class="card-body">
+        <%= simple_format(@job_type.training_module) %>
+      </div>
+    </div>
+    <%= link_to 'Take Quiz', job_type_quiz_path(@job_type), class: 'btn btn-primary mt-3' %>
+  <% else %>
+    <p>No training module available.</p>
+    <% if current_user.admin? %>
+      <%= link_to 'Generate Training Module', generate_training_module_job_type_path(@job_type), class: 'btn btn-secondary' %>
+    <% end %>
+  <% end %>
+  <%= link_to 'Back to Job Types', job_types_path, class: 'btn btn-outline-secondary mt-3' %>
 </div>

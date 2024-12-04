@@ -1,27 +1,65 @@
-<h1><%= @user.name %>'s Profile</h1>
+<!-- app/views/users/show.html.erb -->
 
-<div>
-  <% if @user.profile_picture.attached? %>
-    <%= image_tag @user.profile_picture.variant(resize_to_limit: [200, 200]) %>
-  <% else %>
-    <%= image_tag 'default_profile.png', size: '200x200' %>
-  <% end %>
+<div class="container">
+  <div class="row">
+    <!-- User Profile Information -->
+    <div class="col-md-3">
+      <div class="card mb-4">
+        <div class="card-body text-center">
+          <% if @user.profile_picture.attached? %>
+            <%= image_tag @user.profile_picture, class: 'profile-image mb-2', alt: @user.name, width: 150, height: 150 %>
+          <% else %>
+            <%= image_tag 'default_avatar.png', class: 'profile-image mb-2', alt: 'Default Avatar', width: 150, height: 150 %>
+          <% end %>
+          <h5><%= @user.name %></h5>
+          <p class="text-muted"><%= @user.location %></p>
+          <p><strong>Professions:</strong> <%= @user.job_types.map(&:title).join(', ') %></p>
+          <%= link_to 'Edit Profile', edit_user_path(@user), class: 'btn btn-primary btn-sm mt-2' %>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-9">
+      <h2>My Posted Jobs</h2>
+      <% if @posted_jobs.any? %>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Company</th>
+              <th>Location</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Covered By</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @posted_jobs.each do |job| %>
+              <tr>
+                <td><%= link_to job.job_type.title, job_path(job) %></td>
+                <td><%= job.company_name.present? ? job.company_name : 'N/A' %></td>
+                <td><%= job.location_address.present? ? job.location_address : 'N/A' %></td>
+                <td><%= job.shift_date.strftime("%B %d, %Y") %></td>
+                <td><%= job.shift_started_at.strftime("%I:%M %p") %> - <%= job.shift_ended_at.strftime("%I:%M %p") %></td>
+                <td>
+                  <% if job.cover.present? %>
+                    <%= link_to job.cover.name, user_path(job.cover) %>
+                  <% else %>
+                    <span class="text-muted">Not Covered</span>
+                  <% end %>
+                </td>
+                <td>
+                  <%= link_to 'Edit', edit_job_path(job), class: 'btn btn-primary btn-sm' %>
+                  <%= link_to 'Delete', job_path(job), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      <% else %>
+        <p>You have not posted any jobs.</p>
+      <% end %>
+    </div>
+  </div>
 </div>
-
-<p><strong>Name:</strong> <%= @user.name %></p>
-<p><strong>City:</strong> <%= @user.location %></p>
-
-<p><strong>Professions:</strong></p>
-<ul>
-  <% if @user.job_types.any? %>
-    <% @user.job_types.each do |job_type| %>
-      <li><%= job_type.title %></li>
-    <% end %>
-  <% else %>
-    <li>No professions yet.</li>
-  <% end %>
-</ul>
-
-<% if @user == current_user %>
-  <%= link_to "Edit Profile", edit_user_path(current_user), class: "dropdown-item" %>
-<% end %>

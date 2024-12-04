@@ -1,25 +1,21 @@
 class JobTypesController < ApplicationController
-  before_action :set_job_type, only: %i[ show edit update destroy ]
+  before_action :authenticate_user! 
+  before_action :set_job_type, only: %i[ show edit update destroy training_module complete_training ]
 
-  # GET /job_types or /job_types.json
   def index
     @job_types = JobType.all
   end
 
-  # GET /job_types/1 or /job_types/1.json
   def show
   end
 
-  # GET /job_types/new
   def new
     @job_type = JobType.new
   end
 
-  # GET /job_types/1/edit
   def edit
   end
 
-  # POST /job_types or /job_types.json
   def create
     @job_type = JobType.new(job_type_params)
 
@@ -34,7 +30,7 @@ class JobTypesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /job_types/1 or /job_types/1.json
+  # PATCH/PUT /job_types/1
   def update
     respond_to do |format|
       if @job_type.update(job_type_params)
@@ -47,9 +43,21 @@ class JobTypesController < ApplicationController
     end
   end
 
-  # DELETE /job_types/1 or /job_types/1.json
+  # GET /job_types/1/training_module
+  def training_module
+    # @job_type is set by set_job_type
+    # You can add additional logic or data here if needed
+  end
+
+  def complete_training
+    unless current_user.has_profession?(@job_type)
+      UserJobType.create!(user: current_user, job_type: @job_type)
+    end
+    redirect_to @job_type, notice: "You have gained the profession of #{@job_type.title}!"
+  end
+
   def destroy
-    @job_type.destroy!
+    @job_type.destroy
 
     respond_to do |format|
       format.html { redirect_to job_types_url, notice: "Job type was successfully destroyed." }
@@ -58,12 +66,19 @@ class JobTypesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_job_type
       @job_type = JobType.find(params[:id])
+    rescue ActiveRecord::RecordNotFound
+      redirect_to job_types_path, alert: 'Job type not found.'
     end
 
-    # Only allow a list of trusted parameters through.
+    
+    def authorize_job_type
+      authorize @job_type || JobType
+    end
+
+    
     def job_type_params
       params.require(:job_type).permit(:title, :description, :training_module)
     end

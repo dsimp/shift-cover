@@ -2,19 +2,20 @@
 #
 # Table name: jobs
 #
-#  id               :bigint           not null, primary key
-#  description      :text
-#  location_address :string
-#  location_name    :string
-#  shift_date       :date
-#  shift_ended_at   :datetime
-#  shift_started_at :datetime
-#  title            :string
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  cover_id         :bigint           not null
-#  job_type_id      :bigint           not null
-#  opener_id        :bigint           not null
+#  id                :bigint           not null, primary key
+#  company_name      :string
+#  description       :text
+#  location_address  :string
+#  person_of_contact :string
+#  phone_number      :string
+#  shift_date        :date
+#  shift_ended_at    :datetime
+#  shift_started_at  :datetime
+#  created_at        :datetime         not null
+#  updated_at        :datetime         not null
+#  cover_id          :bigint
+#  job_type_id       :bigint           not null
+#  opener_id         :bigint           not null
 #
 # Indexes
 #
@@ -30,6 +31,37 @@
 #
 class Job < ApplicationRecord
   belongs_to :opener, class_name: 'User', foreign_key: 'opener_id'
-  belongs_to :cover, class_name: 'User', foreign_key: 'cover_id', optional: true
   belongs_to :job_type
+  belongs_to :cover, class_name: 'User', foreign_key: 'cover_id', optional: true
+
+  has_one_attached :image
+
+  # Validations
+  validates :shift_date, presence: true
+  validates :shift_started_at, presence: true
+  validates :shift_ended_at, presence: true
+  validates :location_address, presence: true
+  validates :description, presence: true
+  validates :job_type_id, presence: true
+  validates :company_name, presence: true
+  validates :person_of_contact, presence: true
+  validates :phone_number, presence: true
+  # Remove validations for :location_name and :title
+
+  validate :acceptable_image
+
+  private
+
+  def acceptable_image
+    return unless image.attached?
+
+    unless image.byte_size <= 5.megabytes
+      errors.add(:image, "is too big. Maximum size allowed is 5MB.")
+    end
+
+    acceptable_types = ["image/jpeg", "image/png"]
+    unless acceptable_types.include?(image.content_type)
+      errors.add(:image, "must be a JPEG or PNG.")
+    end
+  end
 end

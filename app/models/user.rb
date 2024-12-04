@@ -28,12 +28,15 @@ class User < ApplicationRecord
 
   has_many :posted_jobs, class_name: 'Job', foreign_key: 'opener_id', dependent: :destroy
   has_many :covered_jobs, class_name: 'Job', foreign_key: 'cover_id'
-  
+
   has_many :user_job_types, dependent: :destroy
   has_many :job_types, through: :user_job_types
-  validates :name, presence: true, uniqueness: true
+  has_many :user_trainings, dependent: :destroy
+  has_many :completed_job_types, through: :user_trainings, source: :job_type
 
   has_one_attached :profile_picture
+
+  validates :name, presence: true, uniqueness: true
 
   validate :acceptable_image
 
@@ -49,5 +52,16 @@ class User < ApplicationRecord
       errors.add(:profile_picture, "must be a JPEG or PNG")
     end
   end
-    
+
+  def has_profession?(job_type)
+    job_types.exists?(job_type.id)
+  end
+
+  def eligible_jobs
+    Job.where(cover_id: nil, job_type_id: job_types.ids)
+  end
+
+  def ineligible_jobs
+    Job.where(cover_id: nil).where.not(job_type_id: job_types.ids)
+  end
 end

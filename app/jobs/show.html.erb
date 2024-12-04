@@ -1,3 +1,4 @@
+
 <div class="container">
   <div class="card mb-4">
     <div class="card-body">
@@ -9,25 +10,23 @@
       </p>
       <hr>
       <p><strong>Job Type:</strong> <%= @job.job_type.title %></p>
-      <p><strong>Company Name:</strong> <%= @job.company_name %></p>
-      <p><strong>Person of Contact:</strong> <%= @job.person_of_contact %></p>
-      <p><strong>Phone Number:</strong> <%= @job.phone_number %></p>
       <p><strong>Description:</strong></p>
       <p><%= simple_format(@job.description) %></p>
-      <p><strong>Location Address:</strong> <%= @job.location_address %></p>
+      <p><strong>Location:</strong> <%= @job.location_name %></p>
+      <p><strong>Address:</strong> <%= @job.location_address %></p>
 
       <!-- Display job image if available -->
-      <% if @job.image.attached? %>
+      <% if @job.job_type.image.attached? %>
         <div class="my-4">
-          <%= image_tag @job.image.variant(resize_to_limit: [600, 400]), class: 'img-fluid rounded', alt: 'Job Image' %>
+          <%= image_tag @job.job_type.image, class: 'img-fluid rounded', alt: @job.job_type.title %>
         </div>
       <% end %>
 
-      <% if current_user.has_profession?(@job.job_type) %>
+      <% if current_user.completed_training_for?(@job.job_type) %>
         <% if @job.cover.present? %>
           <p class="text-success">This job has been covered by <%= link_to @job.cover.name, user_path(@job.cover) %>.</p>
         <% else %>
-          <%= button_to 'Cover This Job', cover_job_path(@job), method: :post, class: 'btn btn-success' %>
+          <%= link_to 'Cover This Job', cover_job_path(@job), method: :post, class: 'btn btn-success' %>
         <% end %>
       <% else %>
         <%= link_to 'Training Required', training_module_job_type_path(@job.job_type), class: 'btn btn-warning' %>

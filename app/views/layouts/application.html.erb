@@ -7,6 +7,9 @@
     <%= csp_meta_tag %>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag 'custom', media: 'all' %>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <%= javascript_importmap_tags %>
     <%= render partial: "shared/cdn_assets" %>
 
@@ -14,9 +17,23 @@
 
   <body>
     <%= render partial: "shared/navbar" %>
-    <div class="container">
+    <div class="container mt-4">
+      <% flash.each do |key, message| %>
+      <div class="alert alert-<%= key == 'notice' ? 'success' : 'danger' %> alert-dismissible fade show" role="alert">
+        <%= message %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    <% end %>
+      <% if controller_name == 'home' && action_name == 'index' %>
+      <div class="row">
+        <%= render 'shared/sidebar' %>
+        <div class="col-md-9">
+          <%= yield %>
+        </div>
+      </div>
+    <% else %>
       <%= yield %>
-    </div>
+    <% end %>
     <p class="notice"><%= notice %></p>
        <p class="alert"><%= alert %></p>
   </body>

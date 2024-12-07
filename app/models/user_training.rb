@@ -4,6 +4,7 @@
 #
 #  id           :bigint           not null, primary key
 #  completed_at :datetime
+#  completion   :boolean
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #  job_type_id  :bigint           not null
@@ -19,7 +20,6 @@
 #  fk_rails_...  (job_type_id => job_types.id)
 #  fk_rails_...  (user_id => users.id)
 #
-# app/models/user_training.rb
 class UserTraining < ApplicationRecord
   belongs_to :user
   belongs_to :job_type

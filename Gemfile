@@ -39,6 +39,8 @@ gem "redis", "~> 4.0"
 
 gem 'faker'
 
+gem 'ruby-openai'
+
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 

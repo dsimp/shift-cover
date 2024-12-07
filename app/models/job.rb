@@ -36,7 +36,6 @@ class Job < ApplicationRecord
 
   has_one_attached :image
 
-  # Validations
   validates :shift_date, presence: true
   validates :shift_started_at, presence: true
   validates :shift_ended_at, presence: true

@@ -93,7 +93,6 @@ body {
   transform: scale(1.05);
 }
 
-/* Animation for Cover Job button */
 .cover-job-button {
   position: relative;
   overflow: hidden;
@@ -136,12 +135,10 @@ body {
   border: none;
 }
 
-/* Typography */
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-/* Links */
 a {
   color: #0d6efd;
 }
@@ -151,7 +148,6 @@ a:hover {
   text-decoration: none;
 }
 
-/* Animations */
 .btn {
   transition: background-color 0.3s ease, color 0.3s ease;
 }

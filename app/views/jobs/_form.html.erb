@@ -10,13 +10,11 @@
     </div>
   <% end %>
 
-  <!-- Company Name -->
   <div class="mb-3">
     <%= form.label :company_name, "Company Name", class: 'form-label' %>
     <%= form.text_field :company_name, class: 'form-control' %>
   </div>
 
-  <!-- Job Title -->
   <div class="mb-3">
     <%= form.label :job_type_id, "Job Type (Title)", class: 'form-label' %>
     <div class="input-group">
@@ -26,49 +24,41 @@
     </div>
   </div>
 
-  <!-- Person of Contact -->
   <div class="mb-3">
     <%= form.label :person_of_contact, "Person of Contact", class: 'form-label' %>
     <%= form.text_field :person_of_contact, class: 'form-control' %>
   </div>
 
-  <!-- Phone Number -->
   <div class="mb-3">
     <%= form.label :phone_number, "Phone Number", class: 'form-label' %>
     <%= form.telephone_field :phone_number, class: 'form-control' %>
   </div>
 
-  <!-- Job Description -->
   <div class="mb-3">
     <%= form.label :description, "Job Description", class: 'form-label' %>
     <%= form.text_area :description, class: 'form-control', rows: 3 %>
   </div>
 
-  <!-- Shift Date -->
   <div class="mb-3">
     <%= form.label :shift_date, "Shift Date", class: 'form-label' %>
     <%= form.date_field :shift_date, class: 'form-control' %>
   </div>
 
-  <!-- Shift Start Time -->
   <div class="mb-3">
     <%= form.label :shift_started_at, "Shift Start Time", class: 'form-label' %>
     <%= form.time_field :shift_started_at, class: 'form-control' %>
   </div>
 
-  <!-- Shift End Time -->
   <div class="mb-3">
     <%= form.label :shift_ended_at, "Shift End Time", class: 'form-label' %>
     <%= form.time_field :shift_ended_at, class: 'form-control' %>
   </div>
 
-  <!-- Location Address -->
   <div class="mb-3">
     <%= form.label :location_address, "Location Address", class: 'form-label' %>
     <%= form.text_field :location_address, class: 'form-control' %>
   </div>
 
-  <!-- Job Image -->
   <div class="mb-3">
     <%= form.label :image, "Job Image (Optional)", class: 'form-label' %>
     <%= form.file_field :image, class: 'form-control' %>
@@ -79,7 +69,6 @@
     <% end %>
   </div>
 
-  <!-- Submit Button -->
   <div class="actions">
     <%= form.submit "Post Job", class: 'btn btn-primary' %>
   </div>

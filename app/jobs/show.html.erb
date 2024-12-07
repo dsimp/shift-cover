@@ -15,7 +15,6 @@
       <p><strong>Location:</strong> <%= @job.location_name %></p>
       <p><strong>Address:</strong> <%= @job.location_address %></p>
 
-      <!-- Display job image if available -->
       <% if @job.job_type.image.attached? %>
         <div class="my-4">
           <%= image_tag @job.job_type.image, class: 'img-fluid rounded', alt: @job.job_type.title %>

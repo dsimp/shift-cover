@@ -1,10 +1,9 @@
-# app/controllers/users_controller.rb
 
 class UsersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_user, only: [:show]
   before_action :set_current_user, only: [:edit, :update]
-  # You can remove the :correct_user before_action if @user is always current_user
+  # I can remove the :correct_user before_action if @user is always current_user
 
   def show
     @user = User.find(params[:id])

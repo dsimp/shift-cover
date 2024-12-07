@@ -30,7 +30,6 @@ class JobTypesController < ApplicationController
     end
   end
 
-  # PATCH/PUT /job_types/1
   def update
     respond_to do |format|
       if @job_type.update(job_type_params)
@@ -43,10 +42,9 @@ class JobTypesController < ApplicationController
     end
   end
 
-  # GET /job_types/1/training_module
   def training_module
     # @job_type is set by set_job_type
-    # You can add additional logic or data here if needed
+    # I can add additional logic or data here if needed
   end
 
   def complete_training

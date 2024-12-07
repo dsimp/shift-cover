@@ -1,4 +1,3 @@
-<!-- app/views/job_types/show.html.erb -->
 <div class="container">
   <h2><%= @job_type.title %></h2>
   <p><%= @job_type.description %></p>
@@ -9,7 +8,8 @@
         <%= simple_format(@job_type.training_module) %>
       </div>
     </div>
-    <%= link_to 'Take Quiz', job_type_quiz_path(@job_type), class: 'btn btn-primary mt-3' %>
+    <!-- TODO: add quiz path -->
+    <% link_to 'Take Quiz', root_path, class: 'btn btn-primary mt-3' %>
   <% else %>
     <p>No training module available.</p>
     <% if current_user.admin? %>

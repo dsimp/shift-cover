@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_03_164521) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_05_180928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -70,6 +70,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_03_164521) do
     t.index ["opener_id"], name: "index_jobs_on_opener_id"
   end
 
+  create_table "learning_modules", force: :cascade do |t|
+    t.bigint "job_type_id", null: false
+    t.text "content"
+    t.json "quiz"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_type_id"], name: "index_learning_modules_on_job_type_id"
+  end
+
   create_table "user_job_types", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "job_type_id", null: false
@@ -85,6 +94,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_03_164521) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "completion"
     t.index ["job_type_id"], name: "index_user_trainings_on_job_type_id"
     t.index ["user_id"], name: "index_user_trainings_on_user_id"
   end
@@ -110,6 +120,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_03_164521) do
   add_foreign_key "jobs", "job_types"
   add_foreign_key "jobs", "users", column: "cover_id"
   add_foreign_key "jobs", "users", column: "opener_id"
+  add_foreign_key "learning_modules", "job_types"
   add_foreign_key "user_job_types", "job_types"
   add_foreign_key "user_job_types", "users"
   add_foreign_key "user_trainings", "job_types"

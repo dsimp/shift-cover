@@ -21,7 +21,8 @@ class JobsController < ApplicationController
     @job = current_user.posted_jobs.new(job_params)
 
     if @job.save
-      redirect_to @job, notice: 'Job was successfully created.'
+       NotifyUsersOfNewJob.new(@job).call
+      redirect_to @job, notice: "Job was successfully created, and users have been notified."
     else
       render :new, status: :unprocessable_entity
     end

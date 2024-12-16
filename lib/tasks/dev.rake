@@ -1,3 +1,4 @@
+# lib/tasks/dev.rake
 require 'open-uri'
 
 desc "Fill the database tables with some sample data"
@@ -5,64 +6,43 @@ task sample_data: :environment do
   if Rails.env.development?
     puts "Clearing existing data..."
     Job.destroy_all
+    LearningModule.destroy_all
+    QuizQuestion.destroy_all
+    QuizOption.destroy_all
+    UserJobType.destroy_all
     JobType.destroy_all
     User.destroy_all
   end
 
+  # Make sure you have a valid OpenAI API key and rate limit access
+  # Also ensure `generate_description!` and `generate_learning_module`
+  # methods in JobType are implemented and working.
+  
   puts "Populating job_types table..."
-  job_types = %w[Cashier Valet Garage\ Attendant Package\ Handler Customer\ Service]
-  job_types.each do |type|
-    JobType.create!(title: type, description: Faker::Lorem.sentence, training_module: Faker::Lorem.paragraph)
-    puts "Created JobType: #{type}"
-  end
-
-  puts "Populating users table..."
-  12.times do
-    name = Faker::Name.first_name
-    user = User.create!(
-      email: "#{name.downcase}@example.com",
-      password: "password",
-      name: name,
-      location: Faker::Address.city
-    )
-    # Attach a sample profile picture
+  job_type_titles = ["Cashier", "Valet", "Garage Attendant", "Package Handler", "Customer Service"]
+  
+  job_type_titles.each do |type|
+    jt = JobType.create!(title: type)
+    
+    # Generate description from OpenAI
     begin
-      avatar_url = "https://robohash.org/#{name.downcase}.png?size=300x300"
-      downloaded_image = URI.open(avatar_url)
-      user.profile_picture.attach(
-        io: downloaded_image,
-        filename: "#{name.downcase}_avatar.png",
-        content_type: 'image/png'
-      )
+      jt.generate_description!
     rescue => e
-      puts "Failed to attach image for user #{user.name}: #{e.message}"
+      puts "Failed to generate description for #{type}: #{e.message}"
     end
 
-    # Assign random professions
-    professions = JobType.order('RANDOM()').limit(rand(1..3))
-    professions.each do |job_type|
-      UserJobType.create!(user: user, job_type: job_type)
+    # Sleep to avoid hitting rate limit
+    sleep 5
+
+    # Generate learning module from OpenAI
+    begin
+      jt.generate_learning_module
+    rescue => e
+      puts "Failed to generate learning module for #{type}: #{e.message}"
     end
-    puts "Created user: #{user.name} with professions: #{professions.map(&:title).join(', ')}"
-  end
 
-  puts "Populating jobs table..."
-  10.times do
-    opener = User.order('RANDOM()').first
-    job_type = JobType.order('RANDOM()').first
-    Job.create!(
-      shift_date: Faker::Date.between(from: 2.days.ago, to: 30.days.from_now),
-      shift_started_at: Faker::Time.between(from: DateTime.now - 1, to: DateTime.now),
-      shift_ended_at: Faker::Time.between(from: DateTime.now, to: DateTime.now + 1),
-      location_address: Faker::Address.full_address,
-      description: Faker::Lorem.paragraph,
-      company_name: Faker::Company.name,
-      person_of_contact: Faker::Name.name,
-      phone_number: Faker::PhoneNumber.phone_number,
-      job_type: job_type,
-      opener: opener
-    )
-  end
+    # Sleep again
+    sleep 5
 
-  puts "Sample data generation completed!"
-end
+    puts "Create
+

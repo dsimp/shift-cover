@@ -69,6 +69,7 @@
           <% end %>
         </tbody>
       </table>
+      <%= paginate @available_jobs %>
     </div>
 
     <!-- Posted Jobs Tab -->
@@ -109,6 +110,7 @@
           <% end %>
         </tbody>
       </table>
+      <%= paginate @posted_jobs %>
 
       <% if @posted_jobs.empty? %>
         <p class="mt-3">You have not posted any jobs.</p>

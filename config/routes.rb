@@ -12,6 +12,8 @@ Rails.application.routes.draw do
   resources :job_types do
     member do
       get :training_module
+      get :take_quiz    
+      post :submit_quiz 
       post :complete_training
     end
   end

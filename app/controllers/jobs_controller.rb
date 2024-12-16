@@ -5,12 +5,12 @@ class JobsController < ApplicationController
 
   def index
     @jobs = if params[:filter] == 'eligible'
-              current_user.eligible_jobs
-            elsif params[:filter] == 'ineligible'
-              current_user.ineligible_jobs
-            else
-              Job.where(cover_id: nil)
-            end
+      current_user.eligible_jobs.page(params[:page]).per(10)
+    elsif params[:filter] == 'ineligible'
+      current_user.ineligible_jobs.page(params[:page]).per(10)
+    else
+      Job.where(cover_id: nil).page(params[:page]).per(10)
+    end
   end
 
   def new

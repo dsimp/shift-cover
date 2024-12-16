@@ -7,7 +7,6 @@
 #  encrypted_password     :string           default(""), not null
 #  location               :string
 #  name                   :citext
-#  password               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string

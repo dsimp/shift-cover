@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_16_022222) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_16_185622) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -64,6 +64,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_16_022222) do
     t.string "company_name"
     t.string "person_of_contact"
     t.string "phone_number"
+    t.string "title"
     t.index ["cover_id"], name: "index_jobs_on_cover_id"
     t.index ["job_type_id"], name: "index_jobs_on_job_type_id"
     t.index ["opener_id"], name: "index_jobs_on_opener_id"
@@ -122,7 +123,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_16_022222) do
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.citext "name"
-    t.string "password"
     t.string "location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

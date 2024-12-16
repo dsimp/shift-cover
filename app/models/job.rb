@@ -11,6 +11,7 @@
 #  shift_date        :date
 #  shift_ended_at    :datetime
 #  shift_started_at  :datetime
+#  title             :string
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  cover_id          :bigint

@@ -1,0 +1,19 @@
+<h1><%= @job_type.title %> Quiz</h1>
+<p>Complete the quiz below to earn the profession credential!</p>
+
+<div data-controller="quiz">
+  <%= form_with url: submit_quiz_job_type_path(@job_type), method: :post, local: true do %>
+  <% @questions.each do |question| %>
+    <div class="mb-3">
+      <strong><%= question.question %></strong><br>
+      <% question.quiz_options.each do |option| %>
+        <div class="form-check">
+          <%= radio_button_tag "quiz[#{question.id}]", option.id, false, id: "option_#{option.id}", class: "form-check-input" %>
+          <%= label_tag "option_#{option.id}", option.option_text, class: "form-check-label" %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <%= submit_tag "Submit Quiz", class: "btn btn-success" %>
+<% end %>
+</div>

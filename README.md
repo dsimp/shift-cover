@@ -132,9 +132,10 @@ Set it to `true` to enable Turbo everywhere, or you can use `data-turbo="true"` 
 - Redis
 - Yarn
 
-### VS Code extensions:
+### VS Code extensio ns:
 - vortizhe.simple-ruby-erb
 - mbessey.vscode-rufo
 - aliariff.vscode-erb-beautify
 - eamodio.gitlens
 - setobiralo.erb-commenter
+  

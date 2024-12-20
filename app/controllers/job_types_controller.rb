@@ -13,6 +13,8 @@ class JobTypesController < ApplicationController
     # If not, show a "Start Training" button
   end
 
+  # Some of these can go in the model
+
   def training_module
     @learning_module = @job_type.learning_module
     # Show full module

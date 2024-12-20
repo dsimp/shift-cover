@@ -4,6 +4,7 @@ class JobsController < ApplicationController
   before_action :authorize_opener!, only: [:edit, :update, :destroy]
 
   def index
+    #Could've used ransack
     @jobs = if params[:filter] == 'eligible'
       current_user.eligible_jobs.page(params[:page]).per(10)
     elsif params[:filter] == 'ineligible'

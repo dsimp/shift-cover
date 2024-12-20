@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root 'home#index'
 
+  #good job on nested routes
   devise_for :users
 
   resources :jobs do

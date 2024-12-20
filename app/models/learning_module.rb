@@ -17,9 +17,13 @@
 #
 #  fk_rails_...  (job_type_id => job_types.id)
 #
+# app/models/learning_module.rb
+
 class LearningModule < ApplicationRecord
   belongs_to :job_type
+  has_many :quiz_questions, dependent: :destroy
 
   validates :content, presence: true
   validates :quiz, presence: true
 end
+

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_05_180928) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_16_185622) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -46,7 +46,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_180928) do
   create_table "job_types", force: :cascade do |t|
     t.string "title"
     t.text "description"
-    t.text "training_module"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -65,6 +64,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_180928) do
     t.string "company_name"
     t.string "person_of_contact"
     t.string "phone_number"
+    t.string "title"
     t.index ["cover_id"], name: "index_jobs_on_cover_id"
     t.index ["job_type_id"], name: "index_jobs_on_job_type_id"
     t.index ["opener_id"], name: "index_jobs_on_opener_id"
@@ -77,6 +77,23 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_180928) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["job_type_id"], name: "index_learning_modules_on_job_type_id"
+  end
+
+  create_table "quiz_options", force: :cascade do |t|
+    t.bigint "quiz_question_id", null: false
+    t.string "option_text"
+    t.boolean "correct"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["quiz_question_id"], name: "index_quiz_options_on_quiz_question_id"
+  end
+
+  create_table "quiz_questions", force: :cascade do |t|
+    t.bigint "learning_module_id", null: false
+    t.text "question"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["learning_module_id"], name: "index_quiz_questions_on_learning_module_id"
   end
 
   create_table "user_job_types", force: :cascade do |t|
@@ -106,7 +123,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_180928) do
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.citext "name"
-    t.string "password"
     t.string "location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -121,6 +137,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_05_180928) do
   add_foreign_key "jobs", "users", column: "cover_id"
   add_foreign_key "jobs", "users", column: "opener_id"
   add_foreign_key "learning_modules", "job_types"
+  add_foreign_key "quiz_options", "quiz_questions"
+  add_foreign_key "quiz_questions", "learning_modules"
   add_foreign_key "user_job_types", "job_types"
   add_foreign_key "user_job_types", "users"
   add_foreign_key "user_trainings", "job_types"

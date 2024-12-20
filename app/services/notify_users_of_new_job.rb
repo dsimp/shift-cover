@@ -17,7 +17,7 @@ class NotifyUsersOfNewJob
     User.joins(:user_job_types).where(user_job_types: { job_type_id: @job.job_type_id })
   end
 
-  def send_notification(user)
+  def send_notification(user) # Can't wait to see this in action once you cofigure mailer
     # Example: Using ActionMailer or other notification services
     UserMailer.new_job_notification(user, @job).deliver_now
   rescue StandardError => e

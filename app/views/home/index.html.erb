@@ -55,6 +55,7 @@
                 <% end %>
               </td>
               <td>
+              <!--This should happen in the controller-->
                 <% if current_user.has_profession?(job.job_type) %>
                   <% if job.cover.present? %>
                     <span class="badge bg-success">Covered by <%= link_to job.cover.name, user_path(job.cover) %></span>

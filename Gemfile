@@ -20,6 +20,7 @@ gem 'aws-sdk-s3', require: false
 gem "puma"
 
 # Gemfile
+gem 'kaminari'
 
 gem 'image_processing', '~> 1.2'
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
@@ -39,8 +40,7 @@ gem "redis", "~> 4.0"
 
 gem 'faker'
 
-gem 'ruby-openai'
-
+gem 'ruby-openai', '~> 7.1'
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
 

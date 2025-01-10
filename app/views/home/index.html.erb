@@ -55,6 +55,7 @@
                 <% end %>
               </td>
               <td>
+              <!--This should happen in the controller-->
                 <% if current_user.has_profession?(job.job_type) %>
                   <% if job.cover.present? %>
                     <span class="badge bg-success">Covered by <%= link_to job.cover.name, user_path(job.cover) %></span>
@@ -69,6 +70,7 @@
           <% end %>
         </tbody>
       </table>
+      <%= paginate @available_jobs %>
     </div>
 
     <!-- Posted Jobs Tab -->
@@ -109,6 +111,7 @@
           <% end %>
         </tbody>
       </table>
+      <%= paginate @posted_jobs %>
 
       <% if @posted_jobs.empty? %>
         <p class="mt-3">You have not posted any jobs.</p>

@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root 'home#index'
 
+  #good job on nested routes
   devise_for :users
 
   resources :jobs do
@@ -12,6 +13,8 @@ Rails.application.routes.draw do
   resources :job_types do
     member do
       get :training_module
+      get :take_quiz    
+      post :submit_quiz 
       post :complete_training
     end
   end

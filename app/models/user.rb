@@ -7,7 +7,6 @@
 #  encrypted_password     :string           default(""), not null
 #  location               :string
 #  name                   :citext
-#  password               :string
 #  remember_created_at    :datetime
 #  reset_password_sent_at :datetime
 #  reset_password_token   :string
@@ -39,6 +38,7 @@ class User < ApplicationRecord
 
   validate :acceptable_image
 
+
   def acceptable_image
     return unless profile_picture.attached?
 
@@ -62,5 +62,15 @@ class User < ApplicationRecord
 
   def ineligible_jobs
     Job.where(cover_id: nil).where.not(job_type_id: job_types.ids)
+  end 
+  
+  after_create :send_welcome_email
+
+
+
+  private
+
+  def send_welcome_email
+    UserMailer.welcome_email(self).deliver_later
   end
 end

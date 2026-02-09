@@ -24,7 +24,7 @@ class JobType < ApplicationRecord
   def generate_description!
     return if self.description.present?
 
-    client = OpenAI::Client.new(access_token: Rails.application.credentials.dig(:openai, :api_key))
+    client = OpenAI::Client.new(access_token: Rails.application.credentials.dig(:openai, :api_key) || ENV['OPENAI_API_KEY'])
     response = client.chat(
       parameters: {
         model: "gpt-3.5-turbo",
@@ -42,7 +42,7 @@ class JobType < ApplicationRecord
   def generate_learning_module
     return if learning_module.present?
 
-    client = OpenAI::Client.new(access_token: Rails.application.credentials.dig(:openai, :api_key))
+    client = OpenAI::Client.new(access_token: Rails.application.credentials.dig(:openai, :api_key) || ENV['OPENAI_API_KEY'])
 
     # Generate training content (~15 minutes)
     content_response = client.chat(

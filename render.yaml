@@ -1,10 +1,8 @@
 services:
   - type: web
     name: ShiftCover # the name of this service, you should change this
-    runtime: ruby # this app is written in ruby
+    runtime: docker # switch to docker
     plan: free # make sure to set this to free or you'll get billed $$$
-    buildCommand: "./bin/render-build.sh"
-    startCommand: "./bin/render-start.sh"
     envVars: # this section sets some ENV variables needed by Render for deployment
       - key: SECRET_KEY_BASE
         generateValue: true

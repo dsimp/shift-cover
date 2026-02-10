@@ -3,7 +3,8 @@ services:
     name: ShiftCover # the name of this service, you should change this
     runtime: ruby # this app is written in ruby
     plan: free # make sure to set this to free or you'll get billed $$$
-    buildCommand: "./bin/render-build.sh" # we already created these two files for you
+    buildCommand: "./bin/render-build.sh"
+    preDeployCommand: "bundle exec rake db:migrate"
     startCommand: "./bin/render-start.sh"
     envVars: # this section sets some ENV variables needed by Render for deployment
       - key: SECRET_KEY_BASE

@@ -19,7 +19,7 @@ bundle exec ruby -e "
 
   uri = URI.parse(url)
   retries = 0
-  max_retries = 30 # Wait up to 60 seconds
+  max_retries = 150 # Wait up to 300 seconds (5 minutes)
 
   begin
     PG.connect(

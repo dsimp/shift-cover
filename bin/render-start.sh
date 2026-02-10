@@ -9,7 +9,7 @@ bundle exec ruby -e "
   require 'uri'
   
   # Ensure stdout is flushed immediately
-  $stdout.sync = true
+  STDOUT.sync = true
   
   url = ENV['DATABASE_URL']
   if url.nil? || url.empty?

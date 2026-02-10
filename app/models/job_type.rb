@@ -49,10 +49,10 @@ class JobType < ApplicationRecord
       parameters: {
         model: "gpt-3.5-turbo",
         messages: [
-          { role: "system", content: "You are a helpful assistant for job training content." },
+          { role: "system", content: "You are an expert corporate trainer." },
           {
             role: "user",
-            content: "Generate a detailed training module (text only) for the #{title} profession. The module should be about 15 minutes in length when read at a normal pace. Include detailed explanations of daily responsibilities, essential skills, best practices, safety considerations, and any relevant protocols."
+            content: "Generate a comprehensive, informational 5-10 minute reading/training module for the #{title} profession. \n\nCrucial Sections to Include:\n1. **Introduction & Role Overview**\n2. **Safety Procedures & Emergency Protocols** (Detailed)\n3. **Professionalism & Workplace Behavior** (Including code of conduct)\n4. **Timeliness & Consideration** (Punctuality and team respect)\n5. **Key Responsibilities & essential Skills**\n6. **Customer Interaction Guidelines**\n\nThe content must be specific to the #{title} role and serve as the study source for a challenging 15-question certification quiz."
           }
         ]
       }
@@ -60,21 +60,25 @@ class JobType < ApplicationRecord
 
     training_content = content_response.dig("choices", 0, "message", "content")
 
-    # Generate quiz content (5 multiple-choice questions)
+    # Generate quiz content (15 multiple-choice questions)
     quiz_response = client.chat(
       parameters: {
         model: "gpt-3.5-turbo",
         messages: [
-          { role: "system", content: "You are an expert in creating quizzes." },
+          { role: "system", content: "You are an expert in creating professional certification exams." },
           {
             role: "user",
-            content: "Create a 5-question multiple-choice quiz for the #{title} profession as a JSON array. Each element: {question: string, options: [4 strings], correct_answer: int(0-3)}"
+            content: "Create a 15-question multiple-choice quiz for the #{title} profession as a JSON array. The questions should be slightly challenging and directly based on safety, professionalism, and role-specific duties. Each element: {question: string, options: [4 strings], correct_answer: int(0-3)}"
           }
         ]
       }
     )
 
     quiz_content = quiz_response.dig("choices", 0, "message", "content")
+    
+    # Clean up markdown code blocks if present
+    quiz_content = quiz_content.gsub(/^```json/, '').gsub(/^```/, '').strip
+
     parsed_quiz = JSON.parse(quiz_content)
 
     lm = LearningModule.create!(

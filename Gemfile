@@ -102,7 +102,7 @@ group :development do
   gem "grade_runner"
   gem "pry-rails"
   gem "rails_db"
-  # gem "rails-erd"
+
   gem "rufo"
   gem "specs_to_readme"
 end
@@ -119,3 +119,5 @@ group :test do
 end
 
 gem "pundit", "~> 2.4"
+
+gem "redcarpet", "~> 3.6"

@@ -38,7 +38,7 @@ class JobTypesController < ApplicationController
       correct_count += 1 if selected_option.correct
     end
 
-    passing_score = (@questions.count * 0.8).ceil
+    passing_score = (@questions.count * 0.75).ceil
 
     if correct_count >= passing_score
       current_user.user_job_types.find_or_create_by!(job_type: @job_type)

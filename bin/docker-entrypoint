@@ -2,7 +2,7 @@
 
 # Wait for database connection
 echo "Checking database connection..."
-ruby -e "
+bundle exec ruby -e "
   require 'pg'
   require 'uri'
   STDOUT.sync = true

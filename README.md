@@ -1,141 +1,100 @@
 # ShiftCover
-## Djvon Simpson
 
-ShiftCover is a web application that streamlines job shift postings and coverage, enabling users to post jobs, cover shifts, and complete training modules for professional certifications.
+ShiftCover is a comprehensive web application designed to streamline job shift postings and coverage. It empowers users to post available shifts, cover shifts for others, and complete training modules for professional certifications.
 
-- Ruby version: `3.2.1`
-- Rails version: `7.1.3.3`
+## Features
 
-### Setup Instructions:
-### Local Setup Instructions
+- **User Authentication**: Secure user registration and login using Devise.
+- **Role-Based Access Control**: Authorization managed by Pundit, ensuring secure access to features based on user roles.
+- **Shift Management**: Users can post shifts they need covered and pick up shifts posted by others.
+- **Training Modules**: Integrated training modules for users to complete certifications.
+- **Admin Dashboard**: (If applicable) Administrative tools to manage users and shifts.
+- **Direct Messaging**: Communication features for users to coordinate shift coverage.
+- **Responsive Design**: Mobile-friendly interface for on-the-go access.
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/shiftcover.git
-   cd shiftcover
-   ```
+## Technology Stack
 
-2. **Install dependencies**:
-   ```bash
-   bundle install
-   yarn install
-   ```
+- **Ruby**: 3.2.2
+- **Framework**: Ruby on Rails 7.1.3
+- **Database**: PostgreSQL
+- **Frontend**: ERB, Stimulus, Turbo
+- **Styling**: Bootstrap/Custom CSS
+- **Authentication**: Devise
+- **Authorization**: Pundit
+- **Pagination**: Kaminari
+- **AI Integration**: OpenAI (configured via `ruby-openai` gem)
+- **Deployment**: Ready for deployment on platforms like Render or Fly.io
 
-3. **Set up the database**:
-   ```bash
-   rails db:create
-   rails db:migrate
-   rake sample_data
-   ```
+## Prerequisites
 
-4. **Configure Amazon S3**:
-   - Add a `.env` file in the root directory with:
-     ```
-     AWS_ACCESS_KEY_ID=your_aws_access_key
-     AWS_SECRET_ACCESS_KEY=your_aws_secret_key
-     AWS_BUCKET_NAME=your_bucket_name
-     AWS_REGION=your_bucket_region
-     ```
+Before you begin, ensure you have the following installed on your local machine:
 
-5. **Precompile assets**:
-   ```bash
-   rails assets:precompile
-   ```
+- Ruby 3.2.2
+- PostgreSQL
+- Redis (for Action Cable and background jobs)
+- Node.js and Yarn
 
-6. **Run the app**:
-   ```bash
-   rails server
-   ```
-   Open your browser and navigate to: `http://localhost:3000`
+## Setup Instructions
 
-
-
-
-### ERD
-![Homepage Screenshot](erd.png)
-
-We've added additional Ruby gems and other software that aren't automatically available in a new Rails app, and configured 
-
-### UJS and Turbo
-
-In Rails version 7, support for Unobtrusive JavaScript (UJS) is not the default. Rather, [this has been replaced with Turbo](https://guides.rubyonrails.org/working_with_javascript_in_rails.html#turbo).
-
-However, in AppDev, we typically want to first demonstrate UJS and then enable Turbo manually when we want it.
-
-Therefore, UJS has been pre-configured here with these steps: 
-
-- Pin UJS + jQuery in `config/importmap.rb` by running:
-
-    ```
-    % ./bin/importmap pin @rails/ujs
-    % ./bin/importmap pin jquery
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/your-username/shift-cover.git
+    cd shift-cover
     ```
 
-- Add UJS + jQuery via:
-
-    ```js
-    // app/javascript/application.js
-    import jquery from "jquery";
-    window.jQuery = jquery;
-    window.$ = jquery;
-    import Rails from "@rails/ujs"
-    Rails.start();
+2.  **Install dependencies**:
+    ```bash
+    bundle install
+    yarn install
     ```
 
-UJS and Turbo can co-exist side-by-side with [these instructions, which we already implemented here](https://github.com/hotwired/turbo-rails/blob/main/UPGRADING.md#upgrading-from-rails-ujs--turbolinks-to-turbo).
+3.  **Set up the database**:
+    ```bash
+    rails db:create
+    rails db:migrate
+    rails db:seed # populates the database with initial data
+    ```
 
-By default, Turbo is disabled via:
+4.  **Configure Environment Variables**:
+    Create a `.env` file in the root directory and add the following keys:
+    ```
+    AWS_ACCESS_KEY_ID=your_aws_access_key
+    AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+    AWS_BUCKET_NAME=your_bucket_name
+    AWS_REGION=your_bucket_region
+    OPENAI_ACCESS_TOKEN=your_openai_api_key
+    ```
 
-```js
-// app/javascript/application.js
-import { Turbo } from "@hotwired/turbo-rails"
-Turbo.session.drive = false
+5.  **Compile Assets**:
+    ```bash
+    rails assets:precompile
+    ```
+
+6.  **Run the Application**:
+    ```bash
+    bin/dev
+    ```
+    or
+    ```bash
+    rails s
+    ```
+    Visit `http://localhost:3000` in your browser.
+
+## Testing
+
+To run the test suite:
+```bash
+bundle exec rspec
 ```
 
-Set it to `true` to enable Turbo everywhere, or you can use `data-turbo="true"` to enable Drive on a per-element basis while leaving it globally `false`.
+## Contributing
 
-### Additional gems:
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/YourFeature`).
+3.  Commit your changes (`git commit -am 'Add some feature'`).
+4.  Push to the branch (`git push origin feature/YourFeature`).
+5.  Create a new Pull Request.
 
-- [`appdev_support`](https://github.com/firstdraft/appdev_support)
-- [`annotate`](https://github.com/ctran/annotate_models)
-- [`awesome_print`](https://github.com/awesome-print/awesome_print)
-- [`better_errors`](https://github.com/BetterErrors/better_errors)
-- [`binding_of_caller`](https://github.com/banister/binding_of_caller)
-- [`dotenv-rails`](https://github.com/bkeepers/dotenv)
-- [`draft_generators`](https://github.com/firstdraft/draft_generators/)
-- [`draft_matchers`](https://github.com/jelaniwoods/draft_matchers/)
-- [`devise`](https://github.com/heartcombo/devise)
-- [`faker`](https://github.com/faker-ruby/faker)
-- [`grade_runner`](https://github.com/firstdraft/grade_runner/)
-- [`htmlbeautifier`](https://github.com/threedaymonk/htmlbeautifier/)
-- [`http`](https://github.com/httprb/http)
-- [`pry_rails`](https://github.com/pry/pry-rails)
-- [`rails_db`](https://github.com/igorkasyanchuk/rails_db)
-- [`rails-erd`](https://github.com/voormedia/rails-erd)
-- [`rspec-html-matchers`](https://github.com/kucaahbe/rspec-html-matchers)
-- [`rspec-rails`](https://github.com/rspec/rspec-rails)
-- [`rufo`](https://github.com/ruby-formatter/rufo)
-- [`specs_to_readme`](https://github.com/firstdraft/specs_to_readme)
-- [`table_print`](https://github.com/arches/table_print)
-- [`web_git`](https://github.com/firstdraft/web_git)
-- [`webmock`](https://github.com/bblimke/webmock)
+## License
 
-### Additional software:
-- OS Ubuntu 20.04.5 LTS
-- Chromedriver
-- Fly.io's `flyctl`
-- Google Chrome (headless browser)
-- Graphviz
-- Node JS 18
-- NPM 8.19.3
-- Postgresql 12
-- Redis
-- Yarn
-
-### VS Code extensio ns:
-- vortizhe.simple-ruby-erb
-- mbessey.vscode-rufo
-- aliariff.vscode-erb-beautify
-- eamodio.gitlens
-- setobiralo.erb-commenter
-  
+This project is open-source and available under the [MIT License](LICENSE).

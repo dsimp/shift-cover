@@ -52,6 +52,30 @@
           <%= f.file_field :profile_picture, class: 'form-control' %>
         </div>
 
+        <div class="mb-3">
+          <%= f.label :role, "Account Type", class: 'form-label' %>
+          <%= f.select :role, User.roles.keys.reject { |r| r == 'admin' }.map { |r| [r.titleize, r] }, {}, class: 'form-select' %>
+        </div>
+
+        <hr>
+        <h5>Business Details (Optional, for Business Accounts)</h5>
+        
+        <div class="mb-3">
+          <%= f.label :company_name, class: 'form-label' %>
+          <%= f.text_field :company_name, class: 'form-control' %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :person_of_contact, "Contact Person", class: 'form-label' %>
+          <%= f.text_field :person_of_contact, class: 'form-control' %>
+        </div>
+
+        <div class="mb-3">
+          <%= f.label :phone_number, class: 'form-label' %>
+          <%= f.telephone_field :phone_number, class: 'form-control' %>
+        </div>
+        <hr>
+
         <!-- Password Fields -->
         <div class="row">
           <div class="col-md-6 mb-3">

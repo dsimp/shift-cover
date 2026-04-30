@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.2.2"
+ruby "3.2.11"
 
 gem "devise"
 
@@ -121,3 +121,5 @@ end
 gem "pundit", "~> 2.4"
 
 gem "redcarpet", "~> 3.6"
+
+gem "stripe", "~> 19.1"

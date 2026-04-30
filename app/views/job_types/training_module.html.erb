@@ -1,15 +1,157 @@
-<div class="container">
-  <h1><%= @job_type.title %> - Training Module</h1>
-<% if @learning_module.present? %>
-  <%= simple_format(@learning_module.content) %>
-  <% if current_user.has_profession?(@job_type) %>
-    <p>You have already earned this profession. Below is the training content for reference.</p>
+<div class="container py-5 min-vh-100 d-flex flex-column align-items-center justify-content-center">
+  <div class="text-center mb-5">
+    <h1 class="display-5 fw-bold text-dark"><%= @job_type.title %> Training</h1>
+    <p class="lead text-muted">Master real-world scenarios before you hit the floor.</p>
+  </div>
+
+  <% if @learning_module.present? %>
+    <% 
+      begin
+        slides = JSON.parse(@learning_module.content)
+        # Fallback if AI didn't return an array of objects
+        slides = [{title: "Training", scenario: slides.to_s, issue: "", solution: ""}] unless slides.is_a?(Array) && slides.first.is_a?(Hash)
+      rescue
+        slides = [{title: "Training", scenario: @learning_module.content, issue: "", solution: ""}]
+      end
+    %>
+    
+    <div class="col-12 col-lg-10 position-relative">
+      
+      <!-- Progress Bar -->
+      <div class="progress mb-4 rounded-pill" style="height: 10px; background-color: #f1f3f5;">
+        <div id="slide-progress" class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: <%= 100.0 / slides.count %>%; transition: width 0.4s ease;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="<%= slides.count %>"></div>
+      </div>
+
+      <!-- Carousel -->
+      <div id="trainingCarousel" class="carousel slide shadow-lg rounded-4 overflow-hidden bg-white" data-bs-ride="false" data-bs-touch="true">
+        <div class="carousel-inner">
+          <% slides.each_with_index do |slide, index| %>
+            <div class="carousel-item <%= 'active' if index == 0 %> p-4 p-md-5">
+              
+              <div class="text-center mb-4">
+                <span class="badge bg-primary rounded-pill px-3 py-2 mb-3">Scenario <%= index + 1 %> of <%= slides.count %></span>
+                <h2 class="fw-bold text-dark"><%= slide["title"] %></h2>
+              </div>
+              
+              <div class="row justify-content-center">
+                <div class="col-md-10">
+                  <!-- Scenario Context -->
+                  <p class="fs-5 text-secondary mb-4 text-center">
+                    <%= slide["scenario"] %>
+                  </p>
+                  
+                  <div class="row g-4 mt-2">
+                    <!-- Issue Card -->
+                    <div class="col-md-6">
+                      <div class="card h-100 border-0 bg-light rounded-4 p-4 slide-card">
+                        <div class="d-flex align-items-center mb-3 text-danger">
+                          <i class="bi bi-exclamation-triangle-fill fs-3 me-2"></i>
+                          <h5 class="mb-0 fw-bold">The Challenge</h5>
+                        </div>
+                        <p class="text-dark mb-0"><%= slide["issue"] %></p>
+                      </div>
+                    </div>
+                    
+                    <!-- Solution Card -->
+                    <div class="col-md-6">
+                      <div class="card h-100 border-0 bg-primary bg-opacity-10 rounded-4 p-4 slide-card">
+                        <div class="d-flex align-items-center mb-3 text-primary">
+                          <i class="bi bi-check-circle-fill fs-3 me-2"></i>
+                          <h5 class="mb-0 fw-bold">The Solution</h5>
+                        </div>
+                        <p class="text-dark mb-0"><%= slide["solution"] %></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Navigation inside slide -->
+              <div class="d-flex justify-content-between align-items-center mt-5 pt-3 border-top">
+                <% if index > 0 %>
+                  <button class="btn btn-outline-secondary rounded-pill px-4" type="button" data-bs-target="#trainingCarousel" data-bs-slide="prev">
+                    <i class="bi bi-arrow-left"></i> Previous
+                  </button>
+                <% else %>
+                  <div></div> <!-- Placeholder for flex alignment -->
+                <% end %>
+
+                <% if index < slides.count - 1 %>
+                  <button class="btn btn-primary rounded-pill px-5 fw-bold modern-btn" type="button" data-bs-target="#trainingCarousel" data-bs-slide="next">
+                    Next <i class="bi bi-arrow-right"></i>
+                  </button>
+                <% else %>
+                  <% if current_user.has_profession?(@job_type) %>
+                    <div class="text-success fw-bold"><i class="bi bi-patch-check-fill"></i> Training Completed</div>
+                  <% else %>
+                    <%= link_to 'Start Certification Exam', take_quiz_job_type_path(@job_type), class: 'btn btn-success rounded-pill px-5 fw-bold modern-btn shadow-sm' %>
+                  <% end %>
+                <% end %>
+              </div>
+
+            </div>
+          <% end %>
+        </div>
+      </div>
+      
+    </div>
   <% else %>
-    <%= link_to 'Take Quiz', take_quiz_job_type_path(@job_type), class: 'btn btn-success mt-4' %>
+    <div class="alert alert-warning rounded-4 shadow-sm p-4 text-center w-50">
+      <i class="bi bi-cone-striped fs-1 d-block mb-3 text-warning"></i>
+      <h4 class="fw-bold">Module Under Construction</h4>
+      <p class="mb-0 text-muted">The AI is currently generating this training simulation. Check back soon.</p>
+    </div>
   <% end %>
-<% else %>
-  <p>No training module available for this job type yet.</p>
-<% end %>
-
-
+  
+  <%= link_to 'Return to Job Board', @job_type, class: 'mt-5 text-secondary text-decoration-none fw-bold hover-primary' %>
 </div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    var myCarousel = document.getElementById('trainingCarousel')
+    if (myCarousel) {
+      myCarousel.addEventListener('slide.bs.carousel', function (event) {
+        var totalItems = <%= slides&.count || 1 %>;
+        var currentIndex = event.to + 1;
+        var percentage = (currentIndex / totalItems) * 100;
+        
+        var progressBar = document.getElementById('slide-progress');
+        if (progressBar) {
+          progressBar.style.width = percentage + '%';
+        }
+      })
+    }
+  });
+</script>
+
+<style>
+  body {
+    background-color: #f8f9fa; /* Light, airy background */
+  }
+
+  .slide-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .slide-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.08)!important;
+  }
+
+  .modern-btn {
+    transition: all 0.3s;
+    letter-spacing: 0.5px;
+  }
+
+  .modern-btn:hover {
+    transform: scale(1.03);
+    box-shadow: 0 .5rem 1rem rgba(13, 110, 253, .25)!important;
+  }
+
+  .hover-primary {
+    transition: color 0.2s;
+  }
+  .hover-primary:hover {
+    color: #0d6efd !important;
+  }
+</style>

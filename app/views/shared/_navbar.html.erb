@@ -9,6 +9,9 @@
       <ul class="navbar-nav ms-auto">
         <% if user_signed_in? %>
           <li class="nav-item">
+            <%= link_to 'Pricing', pricing_path, class: 'nav-link fw-bold text-info' %>
+          </li>
+          <li class="nav-item">
             <%= link_to 'Job Types', job_types_path, class: 'nav-link' %>
           </li>
           <li class="nav-item">

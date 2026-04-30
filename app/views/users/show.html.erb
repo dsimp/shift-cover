@@ -10,7 +10,8 @@
             <%= image_tag 'default_avatar.png', class: 'profile-image mb-2', alt: 'Default Avatar', width: 150, height: 150 %>
           <% end %>
           <h5><%= @user.name %></h5>
-          <p class="text-muted"><%= @user.location %></p>
+          <p class="text-muted mb-1"><%= @user.location %></p>
+          <p class="mb-1"><strong>Rating:</strong> <%= @user.average_rating > 0 ? "⭐ #{@user.average_rating} / 5" : "No ratings yet" %></p>
           <p><strong>Professions:</strong> <%= @user.job_types.map(&:title).join(', ') %></p>
           <%= link_to 'Edit Profile', edit_user_path(@user), class: 'btn btn-primary btn-sm mt-2' %>
         </div>
@@ -58,6 +59,21 @@
         <%= paginate @posted_jobs %>
       <% else %>
         <p>You have not posted any jobs.</p>
+      <% end %>
+
+      <% if @user.received_reviews.any? %>
+        <% if @user.business? || current_user&.business? || current_user == @user %>
+          <hr>
+          <h3>Reviews</h3>
+          <% @user.received_reviews.each do |review| %>
+            <div class="border rounded p-3 mb-3 bg-white">
+              <strong><%= review.reviewer.name %></strong> rated <%= review.rating %> / 5
+              <% if review.comment.present? %>
+                <p class="mt-2 mb-0">"<%= review.comment %>"</p>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
       <% end %>
     </div>
   </div>

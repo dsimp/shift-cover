@@ -1,0 +1,116 @@
+<div class="pricing-header px-3 py-5 pt-md-5 pb-md-4 mx-auto text-center">
+  <h1 class="display-4 fw-bold gradient-text">Power Your Workforce with AI</h1>
+  <p class="lead text-muted">Join the future of shift staffing. Smart matching, instantaneous escrow payouts, and unparalleled reliability.</p>
+</div>
+
+<div class="container mb-5">
+  <div class="row row-cols-1 row-cols-md-2 mb-3 text-center justify-content-center">
+    
+    <!-- Starter Tier -->
+    <div class="col-lg-5">
+      <div class="card mb-4 rounded-4 shadow-lg futuristic-card">
+        <div class="card-header py-3 bg-transparent border-bottom-0">
+          <h4 class="my-0 fw-normal">Starter</h4>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h1 class="card-title pricing-card-title">$49<small class="text-muted fw-light">/mo</small></h1>
+          <ul class="list-unstyled mt-3 mb-4 text-start mx-auto futuristic-list">
+            <li><i class="bi bi-check-circle-fill text-success"></i> Unlimited Job Postings</li>
+            <li><i class="bi bi-check-circle-fill text-success"></i> Escrow Payment Protection</li>
+            <li><i class="bi bi-check-circle-fill text-success"></i> Basic Employee Vetting</li>
+            <li><i class="bi bi-x-circle-fill text-danger"></i> AI Smart Matching</li>
+          </ul>
+          <div class="mt-auto">
+            <% if current_user&.business? %>
+              <%= button_to 'Subscribe to Starter', business_subscriptions_path(tier: 'starter'), class: 'w-100 btn btn-lg btn-outline-primary futuristic-btn' %>
+            <% else %>
+              <%= link_to 'Create Business Account', new_user_registration_path, class: 'w-100 btn btn-lg btn-outline-primary futuristic-btn' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth Tier -->
+    <div class="col-lg-5">
+      <div class="card mb-4 rounded-4 shadow-lg futuristic-card border-primary glow-effect">
+        <div class="card-header py-3 text-white bg-primary border-primary rounded-top-4">
+          <h4 class="my-0 fw-bold"><i class="bi bi-robot"></i> AI Growth</h4>
+        </div>
+        <div class="card-body d-flex flex-column">
+          <h1 class="card-title pricing-card-title">$99<small class="text-muted fw-light">/mo</small></h1>
+          <ul class="list-unstyled mt-3 mb-4 text-start mx-auto futuristic-list">
+            <li><i class="bi bi-check-circle-fill text-success"></i> Everything in Starter</li>
+            <li><i class="bi bi-check-circle-fill text-success"></i> <strong class="gradient-text">AI-Powered Smart Matching</strong></li>
+            <li><i class="bi bi-check-circle-fill text-success"></i> Priority Shift Coverage</li>
+            <li><i class="bi bi-check-circle-fill text-success"></i> Advanced Analytics & Reporting</li>
+          </ul>
+          <div class="mt-auto">
+            <% if current_user&.business? %>
+              <%= button_to 'Unlock AI Growth', business_subscriptions_path(tier: 'growth'), class: 'w-100 btn btn-lg btn-primary futuristic-btn-primary' %>
+            <% else %>
+              <%= link_to 'Get Started with AI', new_user_registration_path, class: 'w-100 btn btn-lg btn-primary futuristic-btn-primary' %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .gradient-text {
+    background: linear-gradient(90deg, #00C9FF 0%, #92FE9D 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .futuristic-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+  }
+  
+  .futuristic-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
+  }
+  
+  .glow-effect {
+    box-shadow: 0 0 20px rgba(13, 110, 253, 0.4) !important;
+  }
+
+  .futuristic-btn {
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .futuristic-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .futuristic-btn-primary {
+    border-radius: 50px;
+    background: linear-gradient(90deg, #0d6efd 0%, #00C9FF 100%);
+    border: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  
+  .futuristic-btn-primary:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 201, 255, 0.6);
+  }
+  
+  .futuristic-list li {
+    padding: 8px 0;
+    font-size: 1.1rem;
+  }
+</style>

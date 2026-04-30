@@ -9,6 +9,8 @@
       </p>
       <hr>
       <p><strong>Job Type:</strong> <%= @job.job_type.title %></p>
+      <p><strong>Hourly Pay:</strong> <%= number_to_currency(@job.hourly_pay) %></p>
+      <p><strong>Status:</strong> <span class="badge bg-info"><%= @job.status.titleize %></span></p>
       <p><strong>Company Name:</strong> <%= @job.company_name %></p>
       <p><strong>Person of Contact:</strong> <%= @job.person_of_contact %></p>
       <p><strong>Phone Number:</strong> <%= @job.phone_number %></p>
@@ -22,14 +24,102 @@
         </div>
       <% end %>
 
-      <% if current_user.has_profession?(@job.job_type) %>
-        <% if @job.cover.present? %>
-          <p class="text-success">This job has been covered by <%= link_to @job.cover.name, user_path(@job.cover) %>.</p>
+      <% if current_user.employee? %>
+        <% if current_user.has_profession?(@job.job_type) %>
+          <% if @job.cover.present? %>
+            <p class="text-success">This job has been covered by <%= link_to @job.cover.name, user_path(@job.cover) %>.</p>
+          <% else %>
+            <%= button_to 'Cover This Job', cover_job_path(@job), method: :post, class: 'btn btn-success' %>
+          <% end %>
         <% else %>
-          <%= button_to 'Cover This Job', cover_job_path(@job), method: :post, class: 'btn btn-success' %>
+          <%= link_to 'Training Required', training_module_job_type_path(@job.job_type), class: 'btn btn-warning' %>
         <% end %>
-      <% else %>
-        <%= link_to 'Training Required', training_module_job_type_path(@job.job_type), class: 'btn btn-warning' %>
+      <% elsif current_user.business? && current_user == @job.opener %>
+         <p><strong>Covered By:</strong> <%= @job.cover ? link_to(@job.cover.name, user_path(@job.cover)) : "Not Covered Yet" %></p>
+         <% if @job.covered? %>
+           <%= button_to 'Mark as Completed', complete_job_path(@job), method: :post, class: 'btn btn-primary mt-2' %>
+         <% end %>
+
+         <% if @job.open? && current_user.subscription_tier == "growth" %>
+           <hr>
+           <div class="ai-match-container mt-4 p-4 rounded-4 shadow-sm" style="border: 1px solid #00C9FF; background: rgba(0, 201, 255, 0.05); transition: transform 0.3s; position: relative; overflow: hidden;">
+             <h4 class="mb-4 fw-bold" style="background: linear-gradient(90deg, #0d6efd 0%, #00C9FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+               <i class="bi bi-robot"></i> Top AI Candidates
+             </h4>
+             <% matches = JobMatcherService.recommended_employees_for(@job) %>
+             <% if matches.any? %>
+               <div class="list-group list-group-flush gap-2">
+                 <% matches.each do |employee| %>
+                   <div class="list-group-item border-0 d-flex justify-content-between align-items-center rounded-3 p-3" style="background: white !important; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: all 0.2s; cursor: pointer;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                     <div class="d-flex align-items-center">
+                       <% if employee.profile_picture.attached? %>
+                         <%= image_tag employee.profile_picture, class: "rounded-circle me-3 border border-2 border-info", style: "width: 50px; height: 50px; object-fit: cover;" %>
+                       <% else %>
+                         <%= image_tag 'default_avatar.png', class: "rounded-circle me-3 border border-2 border-info", style: "width: 50px; height: 50px; object-fit: cover;" %>
+                       <% end %>
+                       <div>
+                         <h6 class="mb-1 fw-bold"><%= link_to employee.name, user_path(employee), class: "text-decoration-none text-dark" %></h6>
+                         <small class="text-muted"><i class="bi bi-star-fill text-warning"></i> <%= employee.average_rating > 0 ? employee.average_rating : "New" %> Rating</small>
+                       </div>
+                     </div>
+                     <button class="btn btn-sm rounded-pill px-3 fw-bold" style="background: linear-gradient(90deg, #92FE9D 0%, #00C9FF 100%); color: #004d40; border: none;">Invite</button>
+                   </div>
+                 <% end %>
+               </div>
+             <% else %>
+               <p class="text-muted fst-italic">Our AI is scanning the network... No perfect matches right now.</p>
+             <% end %>
+           </div>
+         <% elsif @job.open? %>
+           <div class="alert mt-4 rounded-4" style="background: linear-gradient(135deg, rgba(13, 110, 253, 0.1) 0%, rgba(0, 201, 255, 0.1) 100%); border: 1px solid rgba(0, 201, 255, 0.3);">
+             <div class="d-flex align-items-center">
+               <i class="bi bi-stars text-primary fs-3 me-3"></i>
+               <div>
+                 <h6 class="mb-1 fw-bold text-primary">Unlock Smart Matching</h6>
+                 <p class="mb-0 text-muted small">Upgrade to the Growth Tier to instantly see the top 5 certified employees for this shift.</p>
+               </div>
+               <%= link_to 'View Plans', pricing_path, class: 'btn btn-outline-primary rounded-pill ms-auto fw-bold' %>
+             </div>
+           </div>
+         <% end %>
+      <% end %>
+
+      <% if @job.completed? && (@job.opener == current_user || @job.cover == current_user) %>
+        <hr>
+        <h4>Reviews</h4>
+        <% if @job.reviews.where(reviewer: current_user).exists? %>
+          <p class="text-success">You have already submitted a review for this job.</p>
+        <% else %>
+          <div class="card bg-light mt-3">
+            <div class="card-body">
+              <h5>Leave a Review for <%= current_user == @job.opener ? @job.cover.name : @job.opener.name %></h5>
+              <%= form_with(model: [@job, Review.new], local: true) do |f| %>
+                <div class="mb-3">
+                  <%= f.label :rating, 'Rating (1-5 Stars)', class: 'form-label' %>
+                  <%= f.number_field :rating, in: 1..5, class: 'form-control', required: true %>
+                </div>
+                <div class="mb-3">
+                  <%= f.label :comment, 'Comment (Required if 3 stars or less)', class: 'form-label' %>
+                  <%= f.text_area :comment, rows: 3, class: 'form-control' %>
+                </div>
+                <%= f.submit 'Submit Review', class: 'btn btn-success' %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+        
+        <% if @job.reviews.any? %>
+          <div class="mt-4">
+            <% @job.reviews.each do |review| %>
+              <div class="border rounded p-3 mb-2 bg-white">
+                <strong><%= review.reviewer.name %></strong> rated <%= review.rating %> / 5
+                <% if review.comment.present? %>
+                  <p class="mt-2 mb-0">"<%= review.comment %>"</p>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>

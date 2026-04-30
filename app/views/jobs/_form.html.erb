@@ -10,10 +10,6 @@
     </div>
   <% end %>
 
-  <div class="mb-3">
-    <%= form.label :company_name, "Company Name", class: 'form-label' %>
-    <%= form.text_field :company_name, class: 'form-control' %>
-  </div>
 
   <div class="mb-3">
     <%= form.label :job_type_id, "Job Type (Title)", class: 'form-label' %>
@@ -25,13 +21,8 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :person_of_contact, "Person of Contact", class: 'form-label' %>
-    <%= form.text_field :person_of_contact, class: 'form-control' %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :phone_number, "Phone Number", class: 'form-label' %>
-    <%= form.telephone_field :phone_number, class: 'form-control' %>
+    <%= form.label :hourly_pay, "Hourly Pay ($)", class: 'form-label' %>
+    <%= form.number_field :hourly_pay, step: 0.01, class: 'form-control' %>
   </div>
 
   <div class="mb-3">

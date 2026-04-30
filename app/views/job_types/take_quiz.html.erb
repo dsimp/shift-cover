@@ -1,19 +1,154 @@
-<h1><%= @job_type.title %> Quiz</h1>
-<p>Complete the quiz below to earn the profession credential!</p>
+<div class="container py-5 min-vh-100 d-flex flex-column align-items-center justify-content-center">
+  <div class="col-12 col-md-10 col-lg-8 bg-white p-4 p-md-5 rounded-4 shadow-sm position-relative overflow-hidden border border-light">
+    
+    <div class="text-center mb-4">
+      <h2 class="m-0 text-dark fw-bold" style="letter-spacing: 1px;">
+        <i class="bi bi-clipboard-check text-primary me-2"></i> Certification Exam: <%= @job_type.title %>
+      </h2>
+      <p class="text-muted mt-2">Answer all questions correctly to earn your profession badge.</p>
+    </div>
 
-<div data-controller="quiz">
-  <%= form_with url: submit_quiz_job_type_path(@job_type), method: :post, local: true do %>
-  <% @questions.each do |question| %>
-    <div class="mb-3">
-      <strong><%= question.question %></strong><br>
-      <% question.quiz_options.each do |option| %>
-        <div class="form-check">
-          <%= radio_button_tag "quiz[#{question.id}]", option.id, false, id: "option_#{option.id}", class: "form-check-input" %>
-          <%= label_tag "option_#{option.id}", option.option_text, class: "form-check-label" %>
-        </div>
+    <div class="progress mb-5 rounded-pill" style="height: 8px; background: #f1f3f5;">
+      <div id="quiz-progress-bar" class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: 0%; transition: width 0.4s ease;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+    <div data-controller="quiz">
+      <%= form_with url: submit_quiz_job_type_path(@job_type), method: :post, local: true, id: 'certification-form' do %>
+        <% @questions.each_with_index do |question, index| %>
+          <div class="quiz-question-container <%= index == 0 ? 'active' : 'd-none' %>" id="question-<%= index %>" data-index="<%= index %>">
+            <div class="mb-4">
+              <span class="badge bg-primary bg-opacity-10 text-primary rounded-pill px-3 py-2 mb-3 fw-bold">
+                Question <%= index + 1 %> of <%= @questions.count %>
+              </span>
+              <h4 class="text-dark fw-bold lh-base"><%= question.question %></h4>
+            </div>
+            
+            <div class="options-grid">
+              <% question.quiz_options.each do |option| %>
+                <label class="modern-radio-container w-100 mb-3 p-3 rounded-4" for="option_<%= option.id %>">
+                  <div class="d-flex align-items-center">
+                    <%= radio_button_tag "quiz[#{question.id}]", option.id, false, id: "option_<%= option.id}", class: "modern-radio-input me-3", required: true %>
+                    <span class="fs-5 text-dark"><%= option.option_text %></span>
+                  </div>
+                </label>
+              <% end %>
+            </div>
+
+            <div class="d-flex justify-content-end mt-5 pt-3 border-top">
+              <% if index < @questions.count - 1 %>
+                <button type="button" class="btn btn-primary rounded-pill px-5 py-2 fw-bold next-question-btn shadow-sm" data-current="<%= index %>">
+                  Next Question <i class="bi bi-arrow-right ms-1"></i>
+                </button>
+              <% else %>
+                <%= submit_tag "Submit Answers", class: "btn btn-success rounded-pill px-5 py-2 fw-bold shadow-sm" %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       <% end %>
     </div>
-  <% end %>
-  <%= submit_tag "Submit Quiz", class: "btn btn-success" %>
-<% end %>
+    
+    <%= link_to '< Back to Training', training_module_job_type_path(@job_type), class: 'position-absolute top-0 start-0 mt-4 ms-4 text-muted text-decoration-none fw-bold hover-primary' %>
+  </div>
 </div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const nextButtons = document.querySelectorAll('.next-question-btn');
+    const totalQuestions = <%= @questions.count %>;
+    const progressBar = document.getElementById('quiz-progress-bar');
+    
+    function updateProgress(currentIndex) {
+      const percentage = ((currentIndex + 1) / totalQuestions) * 100;
+      if (progressBar) {
+        progressBar.style.width = percentage + '%';
+      }
+    }
+
+    // Initialize progress
+    updateProgress(0);
+
+    nextButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const currentIndex = parseInt(this.getAttribute('data-current'));
+        const currentContainer = document.getElementById(`question-${currentIndex}`);
+        
+        // Validation: Ensure an option is selected before proceeding
+        const radios = currentContainer.querySelectorAll('input[type="radio"]');
+        let isChecked = false;
+        radios.forEach(radio => {
+          if (radio.checked) isChecked = true;
+        });
+
+        if (!isChecked) {
+          alert('Please select an option before proceeding to the next question.');
+          return;
+        }
+
+        const nextContainer = document.getElementById(`question-${currentIndex + 1}`);
+        
+        // Smooth transition
+        currentContainer.style.opacity = 0;
+        setTimeout(() => {
+          currentContainer.classList.add('d-none');
+          currentContainer.classList.remove('active');
+          
+          nextContainer.classList.remove('d-none');
+          nextContainer.classList.add('active');
+          
+          // Small delay before fading in
+          setTimeout(() => {
+            nextContainer.style.opacity = 1;
+            updateProgress(currentIndex + 1);
+          }, 50);
+        }, 200);
+      });
+    });
+  });
+</script>
+
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+  
+  .quiz-question-container {
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .modern-radio-container {
+    background: #ffffff;
+    border: 2px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .modern-radio-container:hover {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.02);
+    transform: translateY(-2px);
+  }
+
+  /* Custom styling for the selected radio state */
+  .modern-radio-container:has(input:checked) {
+    background: rgba(13, 110, 253, 0.05);
+    border-color: #0d6efd;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
+  }
+
+  .modern-radio-input {
+    width: 22px;
+    height: 22px;
+    accent-color: #0d6efd;
+  }
+  
+  .hover-primary {
+    transition: color 0.2s;
+  }
+  
+  .hover-primary:hover {
+    color: #0d6efd !important;
+  }
+</style>

@@ -3,20 +3,21 @@
 # Table name: jobs
 #
 #  id                :bigint           not null, primary key
-#  company_name      :string
 #  description       :text
+#  hourly_pay        :decimal(8, 2)
 #  location_address  :string
-#  person_of_contact :string
-#  phone_number      :string
+#  payout_status     :integer          default("pending")
 #  shift_date        :date
 #  shift_ended_at    :datetime
 #  shift_started_at  :datetime
+#  status            :integer          default("open")
 #  title             :string
 #  created_at        :datetime         not null
 #  updated_at        :datetime         not null
 #  cover_id          :bigint
 #  job_type_id       :bigint           not null
 #  opener_id         :bigint           not null
+#  payment_intent_id :string
 #
 # Indexes
 #
@@ -35,6 +36,13 @@ class Job < ApplicationRecord
   belongs_to :job_type
   belongs_to :cover, class_name: 'User', foreign_key: 'cover_id', optional: true
 
+  has_many :reviews, dependent: :destroy
+
+  enum status: { open: 0, covered: 1, in_progress: 2, completed: 3, cancelled: 4 }
+  enum payout_status: { pending: 0, paid: 1, failed: 2 }, _prefix: :payout
+
+  delegate :company_name, :person_of_contact, :phone_number, to: :opener, allow_nil: true
+
   has_one_attached :image
 
   validates :shift_date, presence: true
@@ -43,9 +51,7 @@ class Job < ApplicationRecord
   validates :location_address, presence: true
   validates :description, presence: true
   validates :job_type_id, presence: true
-  validates :company_name, presence: true
-  validates :person_of_contact, presence: true
-  validates :phone_number, presence: true
+  validates :hourly_pay, presence: true, numericality: { greater_than: 0 }
   # Remove validations for :location_name and :title
 
   validate :acceptable_image
@@ -63,5 +69,9 @@ class Job < ApplicationRecord
     unless acceptable_types.include?(image.content_type)
       errors.add(:image, "must be a JPEG or PNG.")
     end
+  end
+
+  def escrow_payment_completed?
+    payment_intent_id.present? && payout_paid?
   end
 end

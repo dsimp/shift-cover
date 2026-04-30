@@ -7,7 +7,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    @posted_jobs = @user.posted_jobs.order(shift_date: :desc) # Fetch and order the user's posted jobs
+    @posted_jobs = @user.posted_jobs.order(shift_date: :desc).page(params[:page]) # Fetch and order the user's posted jobs
   end
 
   def edit

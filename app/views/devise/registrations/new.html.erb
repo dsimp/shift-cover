@@ -1,69 +1,301 @@
-<h2>Sign up</h2>
-
-
-<div class="container">
+<div class="container py-5">
   <div class="row justify-content-center">
-    <div class="col-md-8 col-lg-6">
-      <h2 class="text-center mb-4">Sign Up</h2>
+    <div class="col-12 col-md-10 col-lg-8">
+      
+      <div class="text-center mb-5">
+        <h2 class="fw-bold text-dark">Join Shift-Cover</h2>
+        <p class="text-muted">Create your account to start picking up shifts today.</p>
+      </div>
 
-      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { multipart: true, class: 'card p-4 shadow' }) do |f| %>
-        <% if flash[:alert] %>
-          <div class="alert alert-danger" role="alert">
-            <%= flash[:alert] %>
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { multipart: true, class: 'needs-validation' }) do |f| %>
+        
+        <%= render "devise/shared/error_messages", resource: resource %>
+
+        <!-- SECTION 1: Account Basics -->
+        <div class="card shadow-sm border-0 rounded-4 mb-4">
+          <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+            <h5 class="fw-bold text-primary"><i class="bi bi-person-badge me-2"></i>Account Details</h5>
           </div>
-        <% elsif flash[:notice] %>
-          <div class="alert alert-success" role="alert">
-            <%= flash[:notice] %>
-          </div>
-        <% end %>
+          <div class="card-body p-4">
+            <div class="mb-3">
+              <%= f.label :email, class: 'form-label fw-bold' %>
+              <%= f.email_field :email, class: 'form-control form-control-lg bg-light border-0', placeholder: "name@example.com", required: true %>
+            </div>
 
-        <div class="mb-3">
-          <%= f.label :name, class: 'form-label' %>
-          <%= f.text_field :name, autofocus: true, class: 'form-control', required: true %>
-        </div>
+            <div class="row g-3">
+              <div class="col-12 col-md-6 mb-3">
+                <%= f.label :password, class: 'form-label fw-bold' %>
+                <%= f.password_field :password, autocomplete: 'new-password', class: 'form-control form-control-lg bg-light border-0', required: true %>
+                <% if @minimum_password_length %>
+                  <small class="form-text text-muted"><%= @minimum_password_length %> characters minimum</small>
+                <% end %>
+              </div>
+              <div class="col-12 col-md-6 mb-3">
+                <%= f.label :password_confirmation, "Confirm Password", class: 'form-label fw-bold' %>
+                <%= f.password_field :password_confirmation, autocomplete: 'new-password', class: 'form-control form-control-lg bg-light border-0', required: true %>
+              </div>
+            </div>
 
-        <div class="mb-3">
-          <%= f.label :email, class: 'form-label' %>
-          <%= f.email_field :email, class: 'form-control', required: true %>
-        </div>
-
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <%= f.label :password, class: 'form-label' %>
-            <% if @minimum_password_length %>
-              <small class="form-text text-muted">
-                (<%= @minimum_password_length %> characters minimum)
-              </small>
-            <% end %>
-            <%= f.password_field :password, autocomplete: 'new-password', class: 'form-control', required: true %>
-          </div>
-
-          <div class="col-md-6 mb-3">
-            <%= f.label :password_confirmation, class: 'form-label' %>
-            <%= f.password_field :password_confirmation, autocomplete: 'new-password', class: 'form-control', required: true %>
+            <div class="mb-3">
+              <%= f.label :role, "Account Type", class: 'form-label fw-bold' %>
+              <%= f.select :role, User.roles.keys.reject { |r| r == 'admin' }.map { |r| [r.titleize, r] }, {}, class: 'form-select form-select-lg bg-light border-0', id: 'role-select' %>
+            </div>
           </div>
         </div>
 
-        <div class="mb-3">
-          <%= f.label :location, class: 'form-label' %>
-          <%= f.text_field :location, class: 'form-control' %>
+        <!-- SECTION 2: Worker Compliance Data (Only shows for Employees) -->
+        <div id="employee-section">
+          <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+              <h5 class="fw-bold text-primary"><i class="bi bi-shield-check me-2"></i>Verification & Compliance</h5>
+              <p class="text-muted small mb-0">Required for 1099 background checks and tax reporting.</p>
+            </div>
+            <div class="card-body p-4">
+              <div class="mb-3">
+                <%= f.label :name, "Full Legal Name", class: 'form-label fw-bold' %>
+                <%= f.text_field :name, class: 'form-control form-control-lg bg-light border-0', placeholder: "First Last" %>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :location, "Full Address (Chicago Metro Focus)", class: 'form-label fw-bold' %>
+                <%= f.text_field :location, class: 'form-control form-control-lg bg-light border-0', placeholder: "123 Main St, Chicago, IL 60601" %>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :phone_number, "Phone Number", class: 'form-label fw-bold' %>
+                <%= f.telephone_field :phone_number, class: 'form-control form-control-lg bg-light border-0', placeholder: "(555) 555-5555" %>
+              </div>
+
+              <div class="row g-3">
+                <div class="col-12 col-md-6 mb-3">
+                  <%= f.label :date_of_birth, "Date of Birth", class: 'form-label fw-bold' %>
+                  <%= f.date_field :date_of_birth, class: 'form-control form-control-lg bg-light border-0' %>
+                </div>
+                <div class="col-12 col-md-6 mb-3">
+                  <%= f.label :ssn, "SSN (Encrypted Securely)", class: 'form-label fw-bold' %>
+                  <%= f.password_field :ssn, class: 'form-control form-control-lg bg-light border-0', placeholder: "XXX-XX-XXXX" %>
+                </div>
+              </div>
+
+              <hr class="my-4">
+              
+              <div class="mb-3">
+                <%= f.label :profile_picture, "Profile Photo", class: 'form-label fw-bold' %>
+                <%= f.file_field :profile_picture, class: 'form-control bg-light border-0' %>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :i9_document, "Work Authorization (I-9 ID/Passport)", class: 'form-label fw-bold' %>
+                <%= f.file_field :i9_document, class: 'form-control bg-light border-0' %>
+                <small class="text-muted">Take a photo or upload a copy of your valid ID.</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 3: Agreements & Consents -->
+          <div class="card shadow-sm border-0 rounded-4 mb-4 border-start border-4 border-warning">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+              <h5 class="fw-bold text-dark"><i class="bi bi-file-earmark-text me-2"></i>Agreements & Consents</h5>
+            </div>
+            <div class="card-body p-4">
+              
+              <div class="form-check mb-3">
+                <%= f.check_box :agreed_to_worker_agreement, class: 'form-check-input', required: true %>
+                <%= f.label :agreed_to_worker_agreement, class: 'form-check-label' do %>
+                  I agree to the <a href="#" class="text-primary text-decoration-underline">Independent Contractor (1099) Worker Agreement</a>.
+                <% end %>
+              </div>
+
+              <div class="form-check mb-3">
+                <%= f.check_box :consented_to_background_check, class: 'form-check-input', required: true %>
+                <%= f.label :consented_to_background_check, class: 'form-check-label' do %>
+                  I consent to a <a href="#" class="text-primary text-decoration-underline">Background Check</a> (FCRA Compliant, at no cost to me).
+                <% end %>
+              </div>
+
+              <div class="form-check mb-3">
+                <%= f.check_box :acknowledged_safety_training, class: 'form-check-input', required: true %>
+                <%= f.label :acknowledged_safety_training, class: 'form-check-label' do %>
+                  I acknowledge the <a href="#" class="text-primary text-decoration-underline">IL DTLSA Safety Training Policy</a> and agree to complete job-specific hazard training.
+                <% end %>
+              </div>
+
+              <div class="form-check mb-3">
+                <%= f.check_box :consented_to_privacy_policy, class: 'form-check-input', required: true %>
+                <%= f.label :consented_to_privacy_policy, class: 'form-check-label' do %>
+                  I consent to the <a href="#" class="text-primary text-decoration-underline">Privacy Policy</a> (Data processing & marketing).
+                <% end %>
+              </div>
+
+              <div class="form-check mb-4">
+                <%= f.check_box :consented_to_tos, class: 'form-check-input', required: true %>
+                <%= f.label :consented_to_tos, class: 'form-check-label' do %>
+                  I accept the <a href="#" class="text-primary text-decoration-underline">Terms of Service</a>.
+                <% end %>
+              </div>
+
+              <div class="bg-light p-3 rounded-3 border">
+                <%= f.label :e_signature_timestamp, "Electronic Signature", class: 'form-label fw-bold text-danger' %>
+                <p class="small text-muted mb-2">By checking the box below, you electronically sign and agree to all the above documents as of today's date.</p>
+                <div class="form-check">
+                  <!-- We map the timestamp check to a virtual field or just set it in controller. For now, a simple check that indicates signing. -->
+                  <input type="checkbox" name="user[e_signature_timestamp]" value="<%= Time.current %>" class="form-check-input" required id="e-sign-checkbox">
+                  <label class="form-check-label fw-bold" for="e-sign-checkbox">
+                    I electronically sign these agreements.
+                  </label>
+                </div>
+              </div>
+
+            </div>
+          </div>
         </div>
 
-        <div class="mb-3">
-          <%= f.label :profile_picture, class: 'form-label' %>
-          <%= f.file_field :profile_picture, class: 'form-control' %>
+        <!-- SECTION 4: Business Accounts (Only shows if Business is selected) -->
+        <div id="business-section" class="d-none">
+          <div class="card shadow-sm border-0 rounded-4 mb-4">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+              <h5 class="fw-bold text-primary"><i class="bi bi-building me-2"></i>Business Details</h5>
+            </div>
+            <div class="card-body p-4">
+              <div class="mb-3">
+                <%= f.label :company_name, "Company Name", class: 'form-label fw-bold' %>
+                <%= f.text_field :company_name, class: 'form-control form-control-lg bg-light border-0' %>
+              </div>
+              
+              <div class="row g-3 mb-3">
+                <div class="col-12 col-md-6">
+                  <%= f.label :person_of_contact, "Contact Person", class: 'form-label fw-bold' %>
+                  <%= f.text_field :person_of_contact, class: 'form-control form-control-lg bg-light border-0' %>
+                </div>
+                <div class="col-12 col-md-6">
+                  <%= f.label :phone_number, "Business Phone", class: 'form-label fw-bold' %>
+                  <%= f.telephone_field :phone_number, class: 'form-control form-control-lg bg-light border-0' %>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <%= f.label :ein, "Employer Identification Number (EIN)", class: 'form-label fw-bold' %>
+                <%= f.password_field :ein, class: 'form-control form-control-lg bg-light border-0', placeholder: "XX-XXXXXXX" %>
+                <small class="text-muted">Encrypted securely for B2B tax compliance.</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="card shadow-sm border-0 rounded-4 mb-4 border-start border-4 border-info">
+            <div class="card-header bg-white border-bottom-0 pt-4 pb-0">
+              <h5 class="fw-bold text-dark"><i class="bi bi-file-earmark-text me-2"></i>Business Agreements & Consents</h5>
+            </div>
+            <div class="card-body p-4">
+              
+              <div class="form-check mb-3">
+                <%= f.check_box :agreed_to_client_services_agreement, class: 'form-check-input' %>
+                <%= f.label :agreed_to_client_services_agreement, class: 'form-check-label' do %>
+                  I agree to the <a href="#" class="text-primary text-decoration-underline">Client Services Agreement</a>. I understand Shift-Cover connects us with 1099 Independent Contractors.
+                <% end %>
+              </div>
+
+              <div class="form-check mb-3">
+                <%= f.check_box :agreed_to_liability_waiver, class: 'form-check-input' %>
+                <%= f.label :agreed_to_liability_waiver, class: 'form-check-label' do %>
+                  I accept the <a href="#" class="text-primary text-decoration-underline">Liability & Indemnification Waiver</a>.
+                <% end %>
+              </div>
+
+              <div class="form-check mb-3">
+                <%= f.check_box :agreed_to_escrow_terms, class: 'form-check-input' %>
+                <%= f.label :agreed_to_escrow_terms, class: 'form-check-label' do %>
+                  I authorize Shift-Cover to hold funds in <a href="#" class="text-primary text-decoration-underline">Escrow</a> prior to shift completion.
+                <% end %>
+              </div>
+
+              <div class="form-check mb-3">
+                <%= f.check_box :agreed_to_non_circumvention, class: 'form-check-input' %>
+                <%= f.label :agreed_to_non_circumvention, class: 'form-check-label' do %>
+                  I agree to the <a href="#" class="text-primary text-decoration-underline">Non-Circumvention Policy</a> (no direct hiring off-platform without buyout).
+                <% end %>
+              </div>
+
+              <div class="form-check mb-4">
+                <%= f.check_box :acknowledged_hazard_disclosure, class: 'form-check-input' %>
+                <%= f.label :acknowledged_hazard_disclosure, class: 'form-check-label' do %>
+                  I acknowledge the <a href="#" class="text-primary text-decoration-underline">IL DTLSA Hazard Disclosure</a> and confirm our workplace complies with OSHA standards.
+                <% end %>
+              </div>
+
+            </div>
+          </div>
         </div>
 
-        <div class="d-grid">
-          <%= f.submit 'Sign Up', class: 'btn btn-primary' %>
+        <div class="d-grid mb-4">
+          <%= f.submit 'Create Account & Sign Agreements', class: 'btn btn-primary btn-lg rounded-pill shadow-sm py-3 fw-bold' %>
         </div>
       <% end %>
 
-      <hr>
-
-      <div class="text-center">
+      <div class="text-center mt-3">
         <%= render 'devise/shared/links' %>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener("turbo:load", function() {
+    const roleSelect = document.getElementById('role-select');
+    const employeeSection = document.getElementById('employee-section');
+    const businessSection = document.getElementById('business-section');
+    
+    // Toggle required attributes based on role
+    function updateVisibility() {
+      if (!roleSelect) return;
+      
+      if (roleSelect.value === 'business') {
+        employeeSection.classList.add('d-none');
+        businessSection.classList.remove('d-none');
+        
+        // Remove required from employee inputs
+        employeeSection.querySelectorAll('input[required], select[required]').forEach(el => {
+          el.dataset.wasRequired = 'true';
+          el.removeAttribute('required');
+        });
+
+        // Add required to business inputs
+        businessSection.querySelectorAll('input[type="text"], input[type="tel"], input[type="password"], input[type="checkbox"]').forEach(el => {
+          el.setAttribute('required', 'required');
+        });
+
+      } else {
+        employeeSection.classList.remove('d-none');
+        businessSection.classList.add('d-none');
+        
+        // Restore required to employee inputs
+        employeeSection.querySelectorAll('[data-was-required="true"]').forEach(el => {
+          el.setAttribute('required', 'required');
+        });
+
+        // Remove required from business inputs
+        businessSection.querySelectorAll('input[required]').forEach(el => {
+          el.removeAttribute('required');
+        });
+      }
+    }
+
+    if (roleSelect) {
+      roleSelect.addEventListener('change', updateVisibility);
+      updateVisibility(); // initial load
+    }
+  });
+</script>
+
+<style>
+  body {
+    background-color: #f8f9fa;
+  }
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    border: 1px solid #0d6efd !important;
+  }
+  .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+</style>

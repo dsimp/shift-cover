@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_16_185622) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_28_233900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "plpgsql"
@@ -61,10 +61,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_16_185622) do
     t.bigint "job_type_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "company_name"
-    t.string "person_of_contact"
-    t.string "phone_number"
     t.string "title"
+    t.decimal "hourly_pay", precision: 8, scale: 2
+    t.integer "status", default: 0
+    t.string "payment_intent_id"
+    t.integer "payout_status", default: 0
     t.index ["cover_id"], name: "index_jobs_on_cover_id"
     t.index ["job_type_id"], name: "index_jobs_on_job_type_id"
     t.index ["opener_id"], name: "index_jobs_on_opener_id"
@@ -94,6 +95,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_16_185622) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["learning_module_id"], name: "index_quiz_questions_on_learning_module_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.integer "rating"
+    t.text "comment"
+    t.bigint "job_id", null: false
+    t.bigint "reviewer_id", null: false
+    t.bigint "reviewee_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["job_id"], name: "index_reviews_on_job_id"
+    t.index ["reviewee_id"], name: "index_reviews_on_reviewee_id"
+    t.index ["reviewer_id"], name: "index_reviews_on_reviewer_id"
   end
 
   create_table "user_job_types", force: :cascade do |t|
@@ -126,6 +140,28 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_16_185622) do
     t.string "location"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "role", default: 0
+    t.string "company_name"
+    t.string "person_of_contact"
+    t.string "phone_number"
+    t.string "stripe_account_id"
+    t.string "stripe_customer_id"
+    t.integer "subscription_tier", default: 0
+    t.datetime "subscription_expires_at"
+    t.date "date_of_birth"
+    t.string "ssn"
+    t.boolean "agreed_to_worker_agreement", default: false
+    t.boolean "consented_to_background_check", default: false
+    t.boolean "acknowledged_safety_training", default: false
+    t.boolean "consented_to_privacy_policy", default: false
+    t.boolean "consented_to_tos", default: false
+    t.datetime "e_signature_timestamp"
+    t.string "ein"
+    t.boolean "agreed_to_client_services_agreement", default: false
+    t.boolean "agreed_to_liability_waiver", default: false
+    t.boolean "agreed_to_escrow_terms", default: false
+    t.boolean "agreed_to_non_circumvention", default: false
+    t.boolean "acknowledged_hazard_disclosure", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["name"], name: "index_users_on_name", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -139,6 +175,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_16_185622) do
   add_foreign_key "learning_modules", "job_types"
   add_foreign_key "quiz_options", "quiz_questions"
   add_foreign_key "quiz_questions", "learning_modules"
+  add_foreign_key "reviews", "jobs"
+  add_foreign_key "reviews", "users", column: "reviewee_id"
+  add_foreign_key "reviews", "users", column: "reviewer_id"
   add_foreign_key "user_job_types", "job_types"
   add_foreign_key "user_job_types", "users"
   add_foreign_key "user_trainings", "job_types"

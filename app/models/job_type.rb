@@ -44,54 +44,67 @@ class JobType < ApplicationRecord
 
     client = OpenAI::Client.new(access_token: Rails.application.credentials.dig(:openai, :api_key) || ENV['OPENAI_API_KEY'])
 
-    # Generate training content (~15 minutes)
-    content_response = client.chat(
-      parameters: {
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: "You are an expert corporate trainer." },
+    prompt = <<~PROMPT
+      You are an expert corporate trainer designing an interactive, fun, and modern training module.
+      Create an engaging, scenario-based training simulation for a new recruit assigned to the '#{title}' profession.
+      
+      Respond ONLY with a valid JSON object matching this exact structure:
+      {
+        "slides": [
           {
-            role: "user",
-            content: "Generate a comprehensive, informational 5-10 minute reading/training module for the #{title} profession. \n\nCrucial Sections to Include:\n1. **Introduction & Role Overview**\n2. **Safety Procedures & Emergency Protocols** (Detailed)\n3. **Professionalism & Workplace Behavior** (Including code of conduct)\n4. **Timeliness & Consideration** (Punctuality and team respect)\n5. **Key Responsibilities & essential Skills**\n6. **Customer Interaction Guidelines**\n\nThe content must be specific to the #{title} role and serve as the study source for a challenging 15-question certification quiz."
+            "title": "A short, engaging title for the slide",
+            "scenario": "A brief 1-2 sentence story setup or context.",
+            "issue": "A specific problem, challenge, or customer situation that arises.",
+            "solution": "The correct, professional way to handle the issue."
+          }
+        ],
+        "quiz": [
+          {
+            "question": "A question directly related to the scenarios.",
+            "options": ["Option A", "Option B", "Option C", "Option D"],
+            "correct_answer": 0
           }
         ]
       }
-    )
+      
+      REQUIREMENTS:
+      1. 'slides' MUST contain at least 5 distinct scenarios covering: Role Overview, Safety, Professionalism, Timeliness, and Customer Interaction. Make them realistic and fun to read.
+      2. 'quiz' MUST contain EXACTLY 10 questions. Do not generate 9 or 11. Exactly 10.
+      3. Every single quiz question MUST have its answer explicitly taught in the 'solution' section of the slides.
+      4. Do not include markdown formatting like ```json in the output. Just raw JSON.
+    PROMPT
 
-    training_content = content_response.dig("choices", 0, "message", "content")
+    begin
+      response = client.chat(
+        parameters: {
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "You are an expert AI simulator outputting valid JSON." },
+            { role: "user", content: prompt }
+          ]
+        }
+      )
 
-    # Generate quiz content (15 multiple-choice questions)
-    quiz_response = client.chat(
-      parameters: {
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: "You are an expert in creating professional certification exams." },
-          {
-            role: "user",
-            content: "Create a 15-question multiple-choice quiz for the #{title} profession as a JSON array. The questions should be slightly challenging and directly based on safety, professionalism, and role-specific duties. Each element: {question: string, options: [4 strings], correct_answer: int(0-3)}"
-          }
-        ]
-      }
-    )
+      content = response.dig("choices", 0, "message", "content")
+      content = content.gsub(/^```json/, '').gsub(/^```/, '').strip
+      parsed_data = JSON.parse(content)
 
-    quiz_content = quiz_response.dig("choices", 0, "message", "content")
-    
-    # Clean up markdown code blocks if present
-    quiz_content = quiz_content.gsub(/^```json/, '').gsub(/^```/, '').strip
+      # Save slides as a serialized JSON string in the 'content' field
+      lm = LearningModule.create!(
+        job_type: self,
+        content: parsed_data["slides"].to_json,
+        quiz: parsed_data["quiz"]
+      )
 
-    parsed_quiz = JSON.parse(quiz_content)
-
-    lm = LearningModule.create!(
-      job_type: self,
-      content: training_content,
-      quiz: parsed_quiz
-    )
-
-    parsed_quiz.each do |q|
-      question = lm.quiz_questions.create!(question: q["question"])
-      q["options"].each_with_index do |opt, i|
-        question.quiz_options.create!(option_text: opt, correct: i == q["correct_answer"])
+      parsed_data["quiz"].each do |q|
+        question = lm.quiz_questions.create!(question: q["question"])
+        q["options"].each_with_index do |opt, i|
+          question.quiz_options.create!(option_text: opt, correct: i == q["correct_answer"])
+        end
       end
+    rescue => e
+      Rails.logger.error("Failed to generate learning module for #{title}: #{e.message}")
+      puts "ERROR generating learning module for #{title}: #{e.message}"
     end
   end
 end

@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   resources :jobs do
     member do
       post :cover
+      post :complete
     end
+    resources :reviews, only: [:create]
   end
 
   resources :job_types do
@@ -20,5 +22,11 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: [:show, :edit, :update]
+
+  get 'pricing', to: 'pages#pricing'
+
+  namespace :business do
+    resources :subscriptions, only: [:create]
+  end
 
 end
